@@ -26,7 +26,7 @@ with col1:
 with col2:
     # ICI TU METS TON NUMÉRO Orange-money
     st.warning("💳 PAIEMENT VIA Orange-Money / AIRTEL MONEY")
-    st.code("Ton Numéro Ici (ex: +243 812 345 678)")
+    st.code(" +243 898 213 650 / +243 973 964 067")
     st.write("Envoyez le message 'VIP' après le transfert.")
 
 st.divider()
