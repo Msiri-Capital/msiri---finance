@@ -1,41 +1,61 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
+import time
 
-st.set_page_config(page_title="M'SIRI CAPITAL VIP", page_icon="🔒")
+st.set_page_config(page_title="M'SIRI CAPITAL VIP", page_icon="📈")
 
-# --- TITRE ET ACCUEIL ---
-st.title("🚀 M'SIRI CAPITAL - COMMANDEMENT")
-st.write("### Outil de Gestion de Fortune - Maire Général Nicolas")
+# --- STYLE ET TITRE ---
+st.title("💎 M'SIRI CAPITAL - TRADING TERMINAL")
+st.write("### Station de Commandement - Maire Général Nicolas")
 
 # --- SYSTÈME DE VÉRIFICATION ---
 if "authentifie" not in st.session_state:
     st.session_state["authentifie"] = False
 
-# Zone de saisie du code
 if not st.session_state["authentifie"]:
-    st.warning("🔒 CET OUTIL EST RÉSERVÉ AUX MEMBRES VIP")
-    code_entre = st.text_input("Entrez votre Code d'Accès unique :", type="password")
+    st.info("🔒 ZONE SÉCURISÉE : IDENTIFICATION REQUISE")
+    code_entre = st.text_input("Code d'Accès VIP :", type="password")
     
-    # Ton code secret (Tu peux le changer ici)
-    CODE_SECRET = "MSIRI2025" 
-    
-    if st.button("Débloquer l'accès"):
-        if code_entre == CODE_SECRET:
+    # TON CODE SECRET ICI
+    if st.button("DÉBLOQUER L'ACCÈS"):
+        if code_entre == "MSIRI2025": # Change-le si tu veux
             st.session_state["authentifie"] = True
             st.rerun()
         else:
-            st.error("Code incorrect. Payez votre abonnement au +243 898 213 650")
-            st.info("Prix : 10$ / mois via M-Pesa")
+            st.error("ACCÈS REFUSÉ. Contactez le Maire Général pour obtenir votre clé.")
+            st.write("💳 Paiement Orange-money : ** +243 898 213 650 **")
 
-# --- CONTENU VERROUILLÉ (S'affiche seulement si le code est bon) ---
+# --- CONTENU VIP (Graphique + Calculateur) ---
 if st.session_state["authentifie"]:
-    st.balloons()
-    st.success("✅ ACCÈS VIP ACTIVÉ")
+    st.success("✅ CONNEXION ÉTABLIE AVEC LES MARCHÉS")
     
-    # Ton outil de trading ici
-    capital = st.number_input("Capital Actuel ($)", value=355.0)
-    objectif = st.slider("Objectif (%)", 1, 10, 5)
-    st.write(f"### Mise conseillée : **{(capital * (objectif/100)):.2f} $**")
+    # 1. GRAPHIQUE EN DIRECT (Simulation temps réel)
+    st.subheader("📈 Évolution du Marché (Live)")
     
-    if st.button("Se déconnecter"):
+    # Création de données dynamiques pour le graphique
+    chart_data = pd.DataFrame(
+        np.random.randn(20, 2) / 10 + [0.5, 0.5],
+        columns=['Bitcoin (BTC)', 'Gold (XAU)']
+    )
+    st.line_chart(chart_data)
+    
+    # 2. CALCULATEUR DE PROFIT
+    st.divider()
+    st.subheader("🧮 Calculateur de Stratégie")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        cap = st.number_input("Capital ($)", value=355.0)
+    with col2:
+        obj = st.slider("Objectif journalier (%)", 1, 10, 5)
+    
+    profit = cap * (obj / 100)
+    st.metric(label="Gain Cible", value=f"{profit:.2f} $", delta=f"{obj}%")
+    
+    if st.button("🔴 Fermer la Session"):
         st.session_state["authentifie"] = False
         st.rerun()
+
+st.divider()
+st.caption("© 2025 M'SIRI COMMANDEMENT - Lubumbashi, RDC")
