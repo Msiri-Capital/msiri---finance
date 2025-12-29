@@ -1,33 +1,41 @@
 import streamlit as st
 
-st.set_page_config(page_title="M'SIRI CAPITAL", page_icon="💰")
+st.set_page_config(page_title="M'SIRI CAPITAL VIP", page_icon="🔒")
 
-st.title("🚀 M'SIRI CAPITAL - TRADING & STRATÉGIE")
-st.write(f"### Bienvenue, Maire Général Nicolas")
+# --- TITRE ET ACCUEIL ---
+st.title("🚀 M'SIRI CAPITAL - COMMANDEMENT")
+st.write("### Outil de Gestion de Fortune - Maire Général Nicolas")
 
-# Section Calculateur (Gratuit)
-st.subheader("📊 Gestionnaire de Risque")
-capital = st.number_input("Capital sur Pocket Broker ($)", value=355.0)
-taux = st.slider("Objectif de profit journalier (%)", 1, 10, 5)
-gain = capital * (taux / 100)
-st.success(f"Ton objectif aujourd'hui : **{gain:.2f} $**")
+# --- SYSTÈME DE VÉRIFICATION ---
+if "authentifie" not in st.session_state:
+    st.session_state["authentifie"] = False
 
-st.divider()
+# Zone de saisie du code
+if not st.session_state["authentifie"]:
+    st.warning("🔒 CET OUTIL EST RÉSERVÉ AUX MEMBRES VIP")
+    code_entre = st.text_input("Entrez votre Code d'Accès unique :", type="password")
+    
+    # Ton code secret (Tu peux le changer ici)
+    CODE_SECRET = "MSIRI2025" 
+    
+    if st.button("Débloquer l'accès"):
+        if code_entre == CODE_SECRET:
+            st.session_state["authentifie"] = True
+            st.rerun()
+        else:
+            st.error("Code incorrect. Payez votre abonnement au +243 898 213 650")
+            st.info("Prix : 10$ / mois via M-Pesa")
 
-# SECTION VIP (Payante)
-st.subheader("💎 ACCÈS AUX SIGNAUX VIP (SÉCURISÉS)")
-st.info("Pour copier mes trades et atteindre le million, rejoins le groupe VIP.")
-
-col1, col2 = st.columns(2)
-with col1:
-    st.write("**Abonnement Mensuel :** 10$")
-    st.write("**Contact Direct :** Maire Général")
-
-with col2:
-    # ICI TU METS TON NUMÉRO Orange-money
-    st.warning("💳 PAIEMENT VIA Orange-Money / AIRTEL MONEY")
-    st.code(" +243 898 213 650 / +243 973 964 067")
-    st.write("Envoyez le message 'VIP' après le transfert.")
-
-st.divider()
-st.write("🛡️ *Propriété du Commandement M'siri 1 - ISTM Lubumbashi*")
+# --- CONTENU VERROUILLÉ (S'affiche seulement si le code est bon) ---
+if st.session_state["authentifie"]:
+    st.balloons()
+    st.success("✅ ACCÈS VIP ACTIVÉ")
+    
+    # Ton outil de trading ici
+    capital = st.number_input("Capital Actuel ($)", value=355.0)
+    objectif = st.slider("Objectif (%)", 1, 10, 5)
+    st.write(f"### Mise conseillée : **{(capital * (objectif/100)):.2f} $**")
+    
+    if st.button("Se déconnecter"):
+        st.session_state["authentifie"] = False
+        st.rerun()
