@@ -111,7 +111,8 @@ else: # Si le message a été vu, on affiche le reste de l'application
             df_proj = pd.DataFrame({'Jour': jours, 'Capital Projeté ($)': croissance})
             st.line_chart(df_proj.set_index('Jour'))
             
-        st.divider        st.subheader("📝 Journal de Guerre (Profits)")
+        st.divider()
+        st.subheader("📝 Journal de Guerre (Profits)")
         gain_reel = st.number_input("Gain réalisé aujourd'hui ($)", value=0.0)
         
         if st.button("ENREGISTRER LA SESSION"):
@@ -122,4 +123,4 @@ else: # Si le message a été vu, on affiche le reste de l'application
             st.rerun()
 
     st.divider()
-    st.caption("© 2026 M'SIRI COMMANDEMENT - Lubumbashi, RDC. Tous droits réservésTon
+    st.caption("© 2026 M'SIRI COMMANDEMENT - Lubumbashi, RDC. Tous droits réservés.")
