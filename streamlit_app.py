@@ -4,156 +4,98 @@ import numpy as np
 import datetime
 
 # 1. CONFIGURATION DE LA PAGE
-st.set_page_config(page_title="M'SIRI CAPITAL - MAÎTRISE TON AVENIR", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="M'SIRI CAPITAL - 2026", layout="wide")
 
-# --- STYLE PERSONNALISÉ ---
-st.markdown("""
-    <style>
-    .main { background-color: #0e1117; color: #e0e0e0; }
-    .stButton>button { width: 100%; background-color: #ff4b4b; color: white; border-radius: 5px; }
-    .stAlert { color: #ffffff; }
-    </style>
-    """, unsafe_allow_html=True)
-
-# 2. MESSAGE D'ACCUEIL STRATÉGIQUE (Visible par tous)
+# --- INITIALISATION DE LA MÉMOIRE (INDISPENSABLE) ---
+if "auth" not in st.session_state:
+    st.session_state["auth"] = False
 if "message_initial_vu" not in st.session_state:
     st.session_state["message_initial_vu"] = False
 
+# --- STYLE ---
+st.markdown("""
+    <style>
+    .stButton>button { width: 100%; border-radius: 5px; height: 3em; font-weight: bold; }
+    .main { background-color: #0e1117; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# 2. MESSAGE D'ACCUEIL (L'ENCOURAGEMENT)
 if not st.session_state["message_initial_vu"]:
-    st.title("🌟 Bienvenue au Commandement M'SIRI CAPITAL 🌟")
-    st.image("https://via.placeholder.com/600x200?text=M'SIRI+CAPITAL+LOGO", caption="Votre QG pour dominer les marchés") # REMPLACE PAR TON LOGO SI TU EN AS UN
-    st.write("---")
-    st.info("""
-    **Cher futur Maire Général,**
+    st.title("🌟 BIENVENUE CHEZ M'SIRI CAPITAL")
+    st.success("### Votre succès commence ici, avec la rigueur du Commandement.")
+    st.write("""
+    **Cher futur investisseur,**
     
-    Naviguez avec confiance dans l'univers du trading. M'SIRI CAPITAL est votre co-pilote intelligent, conçu pour transformer votre potentiel en profit réel.
+    Le trading n'est pas un jeu de hasard, c'est une science de précision. **M'SIRI CAPITAL** est conçu pour vous donner 
+    une vision claire du marché et une gestion de risque de fer. 
     
-    **Pourquoi nous choisir ?**
-    * **📊 Gestion du Risque :** Finis les comptes brûlés ! Notre algorithme vous guide vers des objectifs réalistes.
-    * **📈 Analyse du Marché :** Visualisez les tendances en temps réel, comme un professionnel.
-    * **💎 Accès VIP :** Pour 10$ seulement (Orange Money), débloquez nos signaux précis et nos stratégies exclusives.
+    En utilisant cet outil, vous rejoignez une élite qui ne trade plus à l'aveugle. 
+    L'avantage ? Une discipline mathématique qui protège votre capital et vise la croissance constante.
     
-    **Découvrez notre interface ci-dessous et rejoignez l'élite du trading !**
+    *Prêt à dominer 2026 ?*
     """)
-    if st.button("J'AI COMPRIS, CONTINUER"):
+    if st.button("ACCÉDER AU TERMINAL DE MARCHÉ"):
         st.session_state["message_initial_vu"] = True
         st.rerun()
-else: # Si le message a été vu, on affiche le reste de l'application
-    # 3. GRAPHIQUE TRADINGVIEW PUBLIC (Visible par tous)
-    st.subheader("📊 Marché en Temps Réel (Vue Générale)")
+
+else:
+    # 3. GRAPHIQUE PUBLIC (POUR LA CONFIANCE)
+    st.subheader("📊 Marché Mondial en Direct")
     st.components.v1.html("""
-        <div class="tradingview-widget-container" style="height:350px;">
-          <div id="tradingview_8534a"></div>
+        <div style="height:400px;">
           <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
           <script type="text/javascript">
           new TradingView.widget({
-            "autosize": true,
-            "symbol": "BINANCE:BTCUSDT",
-            "interval": "5",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "fr",
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_side_toolbar": true, /* Cache la barre latérale pour un affichage plus propre */
-            "allow_symbol_change": true,
-            "container_id": "tradingview_8534a"
+            "autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "5",
+            "timezone": "Etc/UTC", "theme": "dark", "style": "1",
+            "locale": "fr", "enable_publishing": false, "container_id": "tv_chart"
           });
           </script>
+          <div id="tv_chart"></div>
         </div>
-    """, height=350)
-    st.caption("Données fournies par TradingView.com")
+    """, height=400)
 
-    
-# --- SYSTÈME DE PAIEMENT AUTOMATISÉ (IMIDATION 1XBET) ---
-
-if not st.session_state["auth"]:
-    st.divider()
-    st.title("🛡️ ZONE COMMANDEMENT - ACCÈS VIP")
-    
-    col_pay1, col_pay2 = st.columns(2)
-    
-    with col_pay1:
-        st.write("### 1. Effectuez votre dépôt")
-        st.info("Abonnement Mensuel : **10$**")
-        
-        # Bouton simulant l'ouverture du service Orange
-        # Note: En RDC, on utilise souvent l'USSD *144#
-        if st.button("💳 PAYER VIA ORANGE MONEY"):
-            st.warning("Composez le *144# sur votre téléphone pour envoyer 10$ au numéro ci-dessous.")
-            st.code("+243 898 213 650 ") # Ton numéro Orange
-            st.write("Une fois le SMS de confirmation reçu, copiez l'ID de transaction.")
-
-    with col_pay2:
-        st.write("### 2. Activez votre accès")
-        # Ici le client entre l'ID de transaction Orange
-        transaction_id = st.text_input("Collez l'ID de transaction Orange Money :")
-        
-        if st.button("VÉRIFIER LE PAIEMENT"):
-            if len(transaction_id) > 5: # Simule une vérification de longueur d'ID
-                st.success("✅ TRANSACTION EN COURS DE VÉRIFICATION...")
-                st.balloons()
-                st.info(f"VOTRE CODE VIP EST : **MSIRI2026**")
-                st.write("Notez ce code et entrez-le ci-dessous.")
-            else:
-                st.error("ID de transaction invalide.")
-
-    # Bouton d'urgence WhatsApp avec Truemessage personnalisé
-    st.write("---")
-    whatsapp_link = "https://wa.me/243 898 213 650 ?text=Bonjour%20Maire%20Général,%20j'ai%20un%20problème%20avec%20mon%20dépôt."
-    st.markdown(f"""
-        <a href="{whatsapp_link}" target="_blank">
-            <button style="width:100%; background-color:#25D366; color:white; border:none; padding:10px; border-radius:5px;">
-                🆘 PROBLÈME ? CONTACTER LE GRAND BLAISE (WHATSAPP)
-            </button>
-        </a>
-    """, unsafe_allow_html=True)
-    
-    st.write("---")
-    # Zone finale pour entrer le code obtenu
-    code_entre = st.text_input("ENTREZ LA CLÉ VIP OBTENUE :", type="password")
-    if st.button("DÉVERROUILLER LE TERMINAL"):
-        if code_entre == "MSIRI2026":
-            st.session_state["auth"] = True
-            st.rerun()
-    # 5. CONTENU VIP (Calculateur + Projection + Journal - Visible après connexion)
-    else:
-        st.title("📈 TERMINAL DE COMMANDEMENT M'SIRI v2.0")
-        st.success(f"Bienvenue Maire Général | Session du {datetime.datetime.now().strftime('%d/%m/%Y')}")
-
-        col1, col2 = st.columns([1, 2])
-
-        with col1:
-            st.subheader("💰 Gestion de Capital")
-            capital_initial = st.number_input("Capital Actuel ($)", value=355.0)
-            objectif_journalier = st.slider("Objectif de Profit (%)", 1, 15, 5)
-            
-            profit_cible = capital_initial * (objectif_journalier / 100)
-            st.metric("Objectif du Jour", f"+{profit_cible:.2f} $")
-            
-            st.divider()
-            st.subheader("🤖 Indicateur M'SIRI IA")
-            tendance = np.random.choice(["🔥 FORTE ACHAT", "📉 VENTE", "⏳ ATTENTE"])
-            st.info(f"Analyse du Signal : **{tendance}**")
-
-        with col2:
-            st.subheader("📊 Projection vers le Million")
-            jours = np.arange(1, 31)
-            croissance = capital_initial * (1 + objectif_journalier/100)**jours
-            df_proj = pd.DataFrame({'Jour': jours, 'Capital Projeté ($)': croissance})
-            st.line_chart(df_proj.set_index('Jour'))
-            
+    # 4. LA BARRIÈRE VIP (SYSTÈME IMITATION 1XBET)
+    if not st.session_state["auth"]:
         st.divider()
-        st.subheader("📝 Journal de Guerre (Profits)")
-        gain_reel = st.number_input("Gain réalisé aujourd'hui ($)", value=0.0)
+        st.header("🛡️ ACCÈS AU COMMANDEMENT VIP")
         
-        if st.button("ENREGISTRER LA SESSION"):
-            st.toast("Session enregistrée !")
+        col_pay1, col_pay2 = st.columns(2)
+        
+        with col_pay1:
+            st.write("### 1. Effectuez votre dépôt")
+            st.warning("💰 Abonnement : 10$ / mois")
+            st.write("Dépôt via **Orange Money** au :")
+            st.code("+243 898 213 650") # METS TON NUMÉRO ICI
+            
+            whatsapp_url = "https://wa.me/243 898 213 650 ?text=Salut%20Maire%20Général,%20je%20viens%20de%20faire%20mon%20dépôt."
+            st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="width:100%; background-color:#25D366; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">🆘 CONTACTER LE GRAND BLAISE (WhatsApp)</button></a>', unsafe_allow_html=True)
 
-        if st.button("🔴 Fermer le Terminal (Se déconnecter)"):
+        with col_pay2:
+            st.write("### 2. Activation")
+            trans_id = st.text_input("ID de transaction (Reçu Orange) :")
+            code_vip = st.text_input("Code d'accès reçu :", type="password")
+            
+            if st.button("DÉVERROUILLER LE TERMINAL VIP"):
+                if code_vip == "MSIRI2026":
+                    st.session_state["auth"] = True
+                    st.rerun()
+                else:
+                    st.error("Code incorrect ou paiement non vérifié.")
+
+    # 5. CONTENU VIP (RÉSERVÉ)
+    else:
+        st.title("📈 TERMINAL VIP M'SIRI")
+        st.success("Accès autorisé - Maire Général")
+        
+        cap = st.number_input("Ton Capital ($)", value=355.0)
+        obj = st.slider("Objectif (%)", 1, 10, 5)
+        st.metric("Gain à atteindre", f"{cap*(obj/100):.2f} $")
+        
+        if st.button("🔴 DÉCONNEXION"):
             st.session_state["auth"] = False
-        messagererun()
+            st.rerun()
 
-    st.divider()
-    st.caption("© 2026 M'SIRI COMMANDEMENT - Lubumbashi, RDC. Tous droits réservés.")
+st.divider()
+st.caption("© 2026 M'SIRI CAPITAL | ISTM Lubumbashi")
