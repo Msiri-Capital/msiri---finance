@@ -53,7 +53,7 @@ else:
         croissance = capital_initial * (1 + objectif_journalier/100)**jours
         df_proj = pd.DataFrame({'Jour': jours, 'Capital Projeté ($)': croissance})
         st.line_chart(df_proj.set_index('Jour'))
-  SECRET
+  
     # --- SECTION JOURNAL DE BORD ---
     st.divider()
     st.subheader("📝 Journal de Guerre (Profits)")
