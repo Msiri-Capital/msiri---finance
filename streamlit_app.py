@@ -65,25 +65,58 @@ else: # Si le message a été vu, on affiche le reste de l'application
     """, height=350)
     st.caption("Données fournies par TradingView.com")
 
-    # 4. SYSTÈME DE SÉCURITÉ (LA PORTE VIP - Après le graphique public)
-    if "auth" not in st.session_state:
-        st.session_state["auth"] = False
+    
+# --- SYSTÈME DE PAIEMENT AUTOMATISÉ (IMIDATION 1XBET) ---
 
-    if not st.session_state["auth"]:
-        st.divider()
-        st.title("🛡️ ZONE COMMANDEMENT - ACCÈS VIP")
-        st.write("### Débloquez votre plein potentiel avec nos outils exclusifs.")
+if not st.session_state["auth"]:
+    st.divider()
+    st.title("🛡️ ZONE COMMANDEMENT - ACCÈS VIP")
+    
+    col_pay1, col_pay2 = st.columns(2)
+    
+    with col_pay1:
+        st.write("### 1. Effectuez votre dépôt")
+        st.info("Abonnement Mensuel : **10$**")
         
-        code_entre = st.text_input("CLÉ DE CHIFFREMENT VIP :", type="password")
+        # Bouton simulant l'ouverture du service Orange
+        # Note: En RDC, on utilise souvent l'USSD *144#
+        if st.button("💳 PAYER VIA ORANGE MONEY"):
+            st.warning("Composez le *144# sur votre téléphone pour envoyer 10$ au numéro ci-dessous.")
+            st.code("+243 898 213 650 ") # Ton numéro Orange
+            st.write("Une fois le SMS de confirmation reçu, copiez l'ID de transaction.")
+
+    with col_pay2:
+        st.write("### 2. Activez votre accès")
+        # Ici le client entre l'ID de transaction Orange
+        transaction_id = st.text_input("Collez l'ID de transaction Orange Money :")
         
-        if st.button("DÉVERROUILLER L'ACCÈS VIP"):
-            if code_entre == "MSIRI2026": # TON CODE SECRET
-                st.session_state["auth"] = True
-                st.rerun()
+        if st.button("VÉRIFIER LE PAIEMENT"):
+            if len(transaction_id) > 5: # Simule une vérification de longueur d'ID
+                st.success("✅ TRANSACTION EN COURS DE VÉRIFICATION...")
+                st.balloons()
+                st.info(f"VOTRE CODE VIP EST : **MSIRI2026**")
+                st.write("Notez ce code et entrez-le ci-dessous.")
             else:
-                st.error("ACCÈS REFUSÉ. Contactez le Maire Général.")
-                st.write("💳 Paiement Orange Money : ** +243 898 213 650 **")
+                st.error("ID de transaction invalide.")
 
+    # Bouton d'urgence WhatsApp avec Truemessage personnalisé
+    st.write("---")
+    whatsapp_link = "https://wa.me/243 898 213 650 ?text=Bonjour%20Maire%20Général,%20j'ai%20un%20problème%20avec%20mon%20dépôt."
+    st.markdown(f"""
+        <a href="{whatsapp_link}" target="_blank">
+            <button style="width:100%; background-color:#25D366; color:white; border:none; padding:10px; border-radius:5px;">
+                🆘 PROBLÈME ? CONTACTER LE GRAND BLAISE (WHATSAPP)
+            </button>
+        </a>
+    """, unsafe_allow_html=True)
+    
+    st.write("---")
+    # Zone finale pour entrer le code obtenu
+    code_entre = st.text_input("ENTREZ LA CLÉ VIP OBTENUE :", type="password")
+    if st.button("DÉVERROUILLER LE TERMINAL"):
+        if code_entre == "MSIRI2026":
+            st.session_state["auth"] = True
+            st.rerun()
     # 5. CONTENU VIP (Calculateur + Projection + Journal - Visible après connexion)
     else:
         st.title("📈 TERMINAL DE COMMANDEMENT M'SIRI v2.0")
@@ -120,7 +153,7 @@ else: # Si le message a été vu, on affiche le reste de l'application
 
         if st.button("🔴 Fermer le Terminal (Se déconnecter)"):
             st.session_state["auth"] = False
-            st.rerun()
+        messagererun()
 
     st.divider()
     st.caption("© 2026 M'SIRI COMMANDEMENT - Lubumbashi, RDC. Tous droits réservés.")
