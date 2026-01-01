@@ -69,8 +69,8 @@ else:
             st.write("Dépôt via **Orange Money** au :")
             st.code("+243 898 213 650") # METS TON NUMÉRO ICI
             
-            whatsapp_url = "https://wa.me/243 898 213 650 ?text=Salut%20Maire%20Général,%20je%20viens%20de%20faire%20mon%20dépôt."
-            st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="width:100%; background-color:#25D366; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">🆘 CONTACTER LE GRAND BLAISE (WhatsApp)</button></a>', unsafe_allow_html=True)
+            whatsapp_url = "https://wa.me/243 973964067 ?text=Salut%20Maire%20Général,%20je%20viens%20de%20faire%20mon%20dépôt."
+            st.markdown(f'<a href="{whatsapp_url}" target="_blank"><button style="width:100%; background-color:#25D366; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">🆘 CONTACTER LE Maire Général (WhatsApp)</button></a>', unsafe_allow_html=True)
 
         with col_pay2:
             st.write("### 2. Activation")
