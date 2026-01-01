@@ -48,7 +48,33 @@ else:
         st.info(f"Analyse du Signal : **{tendance}**")
 
     with col2:
-        st.subheader("📊 Projection vers le Million")
+        st.subheader("📊 Marché en Temps Réel")
+        
+        # Intégration du graphique TradingView (Bitcoin par défaut)
+        st.components.v1.html("""
+            <div class="tradingview-widget-container" style="height:400px;">
+              <div id="tradingview_8534a"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+              <script type="text/javascript">
+              new TradingView.widget({
+                "autosize": true,
+                "symbol": "BINANCE:BTCUSDT",
+                "interval": "5",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "fr",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_8534a"
+              });
+              </script>
+            </div>
+        """, height=400)
+
+        st.subheader("📉 Projection vers le Million")
         jours = np.arange(1, 31)
         croissance = capital_initial * (1 + objectif_journalier/100)**jours
         df_proj = pd.DataFrame({'Jour': jours, 'Capital Projeté ($)': croissance})
