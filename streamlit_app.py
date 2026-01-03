@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import datetime
+import random # <--- LE MOTEUR DU HASARD EST ICI
 
+# --- CONFIGURATION ET INITIALISATION ---
+if "auth" not in st.session_state:
+    st.session_state["auth"] = False
+# ... (le reste de ton code)
 # --- CONFIGURATION DE LA PAGE ---
 st.set_page_config(page_title="M'SIRI COMMAND CENTER 2026", layout="wide", initial_sidebar_state="collapsed")
 
