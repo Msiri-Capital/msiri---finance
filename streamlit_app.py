@@ -3,105 +3,220 @@ import pandas as pd
 import numpy as np
 import datetime
 
-# 1. CONFIGURATION
-st.set_page_config(page_title="M'SIRI CAPITAL & FOOT", layout="wide")
+# --- CONFIGURATION DE LA PAGE ---
+st.set_page_config(page_title="M'SIRI COMMAND CENTER 2026", layout="wide", initial_sidebar_state="collapsed")
 
-# --- INITIALISATION DES COMPTEURS ---
+# --- INITIALISATION ROBUSTE DU SESSION STATE ---
 if "auth" not in st.session_state:
     st.session_state["auth"] = False
-if "essais_foot" not in st.session_state:
-    st.session_state["essais_foot"] = 0
+if "accueil_vu" not in st.session_state:
+    st.session_state["accueil_vu"] = False
+if "essais_foot_gratuits" not in st.session_state:
+    st.session_state["essais_foot_gratuits"] = 0 # Compteur pour les essais foot
 
-# 2. INTERFACE PUBLIQUE (GRAPHIQUE + FOOT GRATUIT)
-st.title("🌟 M'SIRI COMMAND CENTER - 2026")
+# --- STYLES PERSONNALISÉS ---
+st.markdown("""
+    <style>
+    .main { background-color: #0e1117; color: #e0e0e0; }
+    .stButton>button { 
+        width: 100%; 
+        background-color: #ff4b4b; /* Rouge M'SIRI */
+        color: white; 
+        border-radius: 5px; 
+        padding: 10px 0; 
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+    .stAlert { color: #ffffff; }
+    /* Style pour le bouton WhatsApp */
+    .whatsapp-button button {
+        background-color: #25D366 !important; /* Vert WhatsApp */
+        color: white !important;
+        border: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# --- GRAPHIQUE LIVE ---
-st.components.v1.html("""
-    <div style="height:300px;">
-      <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-      <script type="text/javascript">
-      new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "5", "theme": "dark", "container_id": "tv_chart"});
-      </script><div id="tv_chart"></div>
-    </div>
-""", height=300)
+# --- NUMÉRO ORANGE MONEY ET WHATSAPP (À REMPLACER) ---
+TON_NUMERO_OM = "+243898213650" # <<< Mets ton numéro Orange Money ici
+TON_CODE_VIP = "SLVC2026" # <<< Ton code VIP final
 
-st.divider()
-
-
-# --- SECTION FOOT AVANT VIP (AVEC DEUX CASES DE SAISIE) ---
-st.subheader("⚽ ANALYSEUR DE PRONOSTICS (Mode Essai)")
-
-if not st.session_state["auth"]:
-    reste = 2 - st.session_state["essais_foot"]
-    if reste > 0:
-        st.write(f"🎁 Il vous reste **{reste} analyses gratuites**.")
-        
-        # LES DEUX CASES POUR LE CLIENT
-        col_equipe1, col_equipe2 = st.columns(2)
-        with col_equipe1:
-            home_team = st.text_input("Équipe à Domicile :", placeholder="Ex: Real Madrid")
-        with col_equipe2:
-            away_team = st.text_input("Équipe Visiteuse :", placeholder="Ex: FC Barcelone")
-        
-        if st.button("LANCER L'ANALYSE IA"):
-            if home_team and away_team:
-                st.session_state["essais_foot"] += 1
-                
-                # GÉNÉRATION D'UN PRONOSTIC SEMBLANT RÉEL
-                # On utilise un petit calcul basé sur les noms pour que le résultat varie
-                score_sim = (len(home_team) + len(away_team)) % 3
-                resultats = [
-                    f"Victoire de {home_team}. Leur forme à domicile est imprenable.",
-                    f"Match nul probable. Les deux défenses sont très compactes cette semaine.",
-                    f"Avantage {away_team}. Attention aux contre-attaques rapides."
-                ]
-                
-                st.info(f"**ANALYSE M'SIRI POUR : {home_team} VS {away_team}**")
-                st.write(f"1. Les algorithmes détectent une intensité forte sur le côté droit de **{home_team}**.")
-                st.write(f"2. **{away_team}** a encaissé 1.5 but en moyenne sur ses 3 derniers déplacements.")
-                st.write(f"3. **PRONOSTIC FINAL :** {resultats[score_sim]}")
-                st.write("4. Indice de confiance : **82%**.")
-                st.write("5. Conseil : Gestion de mise prudente recommandée.")
-                
-                st.rerun()
-            else:
-                st.warning("Veuillez entrer les noms des deux équipes.")
-    else:
-        st.error("🚫 LIMITE D'ESSAI ATTEINTE !")
-        st.warning("Passez en mode VIP pour des analyses illimitées sur tous vos matchs.")
-
-# 3. LA PORTE VIP (ORANGE MONEY)
-if not st.session_state["auth"]:
-    st.header("🛡️ ACCÈS AU COMMANDEMENT VIP")
-    col1, col2 = st.columns(2)
+# --- FENÊTRE 1: ÉCRAN D'ACCUEIL CAPTIVANT ---
+if not st.session_state["accueil_vu"]:
+    st.image("https://via.placeholder.com/600x250?text=M'SIRI+CAPITAL+LOGO+2026", caption="Votre QG pour dominer les marchés") # Remplace par ton logo
+    st.title("🌟 Bienvenue au Commandement M'SIRI CAPITAL 🌟")
+    st.subheader("Transformez votre ambition en succès financier.")
+    st.write("---")
+    st.info("""
+    **Cher futur Maire Général,**
     
-    with col1:
-        st.write("### 1. Dépôt Orange Money")
-        st.info("Abonnement : **10$**")
-        st.code("+243 898 213 650") # TON NUMÉRO ICI
-        st.markdown('[🆘 CONTACTER LE Maire Général (WhatsApp)](https://wa.me/243 973 964 067)', unsafe_allow_html=True)
+    Fatigué des pertes et des pronostics incertains ? **M'SIRI CAPITAL 2.0** est votre terminal de décision ultime.
+    Nous vous offrons une approche stratégique pour le **Trading** et des analyses poussées pour les **Pronostics Sportifs**.
+    
+    **Pourquoi M'SIRI ?**
+    * **📊 Vision Claire :** Accédez aux marchés en temps réel.
+    * **🎯 Stratégie Gagnante :** Des outils pour protéger et faire fructifier votre capital.
+    * **⚽ Pronostics Affûtés :** Des analyses IA pour vos paris footballistiques (2 essais gratuits !).
+    * **🤝 Support Local :** Le Maire Général est là pour vous accompagner.
+    
+    Prêt à cesser de deviner et commencer à conquérir ?
+    """)
+    if st.button("ACCÉDER AU TERMINAL DU COMMANDEMENT"):
+        st.session_state["accueil_vu"] = True
+        st.rerun()
 
-    with col2:
-        st.write("### 2. Activation")
-        code_vip = st.text_input("Entrez votre code d'accès :", type="password")
-        if st.button("ACTIVER MON ACCÈS"):
-            if code_vip == "MSIRI2026":
+# --- FENÊTRE 2: DÉCOUVERTE (GRAPHIQUE + 2 ESSAIS FOOT + ACCÈS VIP) ---
+elif not st.session_state["auth"]:
+    st.title("🚀 Terminal de Découverte M'SIRI")
+    st.caption("Découvrez la puissance avant de rejoindre l'élite.")
+
+    # --- GRAPHIQUE LIVE (TOUJOURS VISIBLE) ---
+    st.subheader("📈 Marché Mondial en Direct")
+    st.components.v1.html("""
+        <div style="height:350px;">
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script type="text/javascript">
+          new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "5", "theme": "dark", "container_id": "tv_chart_public"});
+          </script><div id="tv_chart_public"></div>
+        </div>
+    """, height=350)
+    st.caption("Données en temps réel fournies par TradingView.com")
+
+    st.divider()
+
+    # --- SECTION FOOT AVEC 2 ESSAIS ---
+    st.subheader("⚽ Analyse de Matchs (2 Essais Gratuits)")
+
+    if st.session_state["essais_foot_gratuits"] < 2:
+        st.write(f"Il vous reste **{2 - st.session_state['essais_foot_gratuits']} analyses gratuites**.")
+        col_e1, col_e2 = st.columns(2)
+        with col_e1:
+            equipe_dom = st.text_input("Équipe à Domicile :", placeholder="Ex: TP Mazembe", key="eq_dom_free")
+        with col_e2:
+            equipe_ext = st.text_input("Équipe Visiteuse :", placeholder="Ex: Vita Club", key="eq_ext_free")
+
+        if st.button("OBTENIR LE PRONOSTIC GRATUIT"):
+            if equipe_dom and equipe_ext:
+                st.session_state["essais_foot_gratuits"] += 1
+                
+                # Génération de pronostic (simulé pour l'exemple)
+                import random
+                resultats_possibles = [
+                    f"Victoire de **{equipe_dom}**. Leur attaque est en feu à domicile.",
+                    f"Match nul probable. Les défenses des deux équipes sont très solides.",
+                    f"**{equipe_ext}** pourrait créer la surprise. Attention à leur vitesse en contre."
+                ]
+                pronostic_choisi = random.choice(resultats_possibles)
+                
+                st.success(f"**ANALYSE M'SIRI :** {pronostic_choisi}")
+                st.write("Indice de confiance : **75%**.")
+                st.write("Conseil : 'Moins de 3.5 buts' pourrait être une option sécurisée.")
+                st.info(f"Il vous reste {2 - st.session_state['essais_foot_gratuits']} essai(s) gratuit(s).")
+                st.rerun() # Rafraîchir pour mettre à jour le compteur
+            else:
+                st.warning("Veuillez saisir les noms des deux équipes.")
+    else:
+        st.error("🚫 Limite d'essais gratuits atteinte pour les pronostics.")
+        st.warning("Passez en mode VIP pour des analyses illimitées et nos outils de trading avancés !")
+
+    st.divider()
+
+    # --- ACCÈS VIP ET PAIEMENT ---
+    st.header("👑 Débloquez l'Accès VIP Complet")
+    st.write("Le mode VIP vous donne un pouvoir illimité sur les analyses et les outils.")
+    
+    col_pay_info, col_pay_action = st.columns(2)
+    
+    with col_pay_info:
+        st.subheader("1. Dépôt Orange Money")
+        st.info(f"**Abonnement Mensuel : 10$**")
+        st.write(f"Envoyez votre paiement à ce numéro : **{+243898213650}**")
+        
+        whatsapp_link = f"https://wa.me/{+243973964067}?text=Bonjour%20Maire%20Général,%20je%20viens%20de%20faire%20un%20dépôt%20pour%20l'accès%20VIP."
+        st.markdown(
+            f'<div class="whatsapp-button"><a href="{whatsapp_link}" target="_blank">'
+            '<button style="background-color:#25D366; color:white;">🆘 CONTACTER LE Maire Général (WhatsApp)</button>'
+            '</a></div>', unsafe_allow_html=True
+        )
+
+    with col_pay_action:
+        st.subheader("2. Activer votre Accès")
+        code_vip_input = st.text_input("CLÉ D'ACTIVATION VIP :", type="password", key="vip_code_public")
+        
+        if st.button("DÉVERROUILLER L'ESPACE VIP"):
+            if code_vip_input == TON_CODE_VIP:
                 st.session_state["auth"] = True
                 st.rerun()
             else:
-                st.error("Code invalide.")
+                st.error("Clé VIP incorrecte. Veuillez vérifier ou contacter le support.")
 
-# 4. MODE VIP TOTAL (DÉVERROUILLÉ)
+# --- FENÊTRE 3: ESPACE VIP (ILLIMITÉ) ---
 else:
     st.balloons()
-    st.title("🚀 ESPACE VIP DÉVERROUILLÉ")
-    st.write("Bienvenue, Maire Général. Ici, les pronostics et les outils de trading sont **illimités**.")
-    
-    # Mettre ici les outils de trading avancés et tous les matchs
-    st.subheader("💰 Calculateur de Gestion de Capital")
-    cap = st.number_input("Capital ($)", value=355.0)
-    st.write(f"Objectif sécurisé : **{cap*0.05:.2f}$** (5% de profit)")
+    st.title("🏆 BIENVENUE DANS L'ESPACE VIP M'SIRI !")
+    st.success(f"Accès Illimité Actif. Maire Général, session du {datetime.datetime.now().strftime('%d/%m/%Y')}")
 
-    if st.button("🔴 SE DÉCONNECTER"):
+    # --- SECTION TRADING AVANCÉE (VIP) ---
+    st.header("📈 Terminal de Trading Avancé")
+    col_t1, col_t2 = st.columns([1, 2])
+    
+    with col_t1:
+        st.subheader("💰 Gestion de Capital Personnalisée")
+        capital_actuel = st.number_input("Mon Capital Actuel ($)", value=355.0, min_value=1.0)
+        objectif_perso = st.slider("Objectif de Profit Journalier (%)", 1, 15, 5)
+        
+        gain_cible = capital_actuel * (objectif_perso / 100)
+        st.metric("Gain Cible du Jour", f"+{gain_cible:.2f} $")
+        
+        st.divider()
+        st.subheader("🤖 Signal d'Indicateur IA M'SIRI")
+        # Ici tu peux mettre des signaux plus sophistiqués ou des conseils quotidiens
+        tendances_vip = ["🟢 ACHAT FORT : Préparer l'entrée", "🟡 ATTENTE : Observation du marché", "🔴 VENTE : Consolider les profits"]
+        st.info(f"Signal du jour : **{random.choice(tendances_vip)}**")
+
+    with col_t2:
+        st.subheader("📊 Plan de Croissance vers le Million")
+        jours_proj = np.arange(1, 31)
+        croissance_proj = capital_actuel * (1 + objectif_perso/100)**jours_proj
+        df_projection = pd.DataFrame({'Jour': jours_proj, 'Capital Projeté ($)': croissance_proj})
+        st.line_chart(df_projection.set_index('Jour'))
+        
+        st.caption("Cette projection n'est pas une garantie, mais un objectif de croissance basé sur votre discipline.")
+
+    st.divider()
+
+    # --- SECTION FOOT ILLIMITÉE (VIP) ---
+    st.header("⚽ Pronostics Football Illimités")
+    st.write("Entrez les équipes de votre choix pour obtenir des analyses précises sans limite.")
+    
+    col_eq_vip1, col_eq_vip2 = st.columns(2)
+    with col_eq_vip1:
+        equipe_dom_vip = st.text_input("Équipe à Domicile (VIP) :", placeholder="Ex: Bayern Munich", key="eq_dom_vip")
+    with col_eq_vip2:
+        equipe_ext_vip = st.text_input("Équipe Visiteuse (VIP) :", placeholder="Ex: Borussia Dortmund", key="eq_ext_vip")
+    
+    if st.button("ANALYSER LE MATCH (VIP)"):
+        if equipe_dom_vip and equipe_ext_vip:
+            import random
+            resultats_vip = [
+                f"Victoire nette de **{equipe_dom_vip}**. Leur historique à domicile est dominant.",
+                f"Un match nul serré est possible. Les deux équipes sont de force égale.",
+                f"**{equipe_ext_vip}** a des atouts pour surprendre. Ne les sous-estimez pas."
+            ]
+            pronostic_vip = random.choice(resultats_vip)
+
+            st.success(f"**ANALYSE STRATÉGIQUE VIP :** {pronostic_vip}")
+            st.write("Conseils supplémentaires : 'Plus de 1.5 buts' ou 'Les deux équipes marquent'.")
+            st.write("Indice de confiance du Commandement M'SIRI : **90%**.")
+        else:
+            st.warning("Veuillez saisir les noms des deux équipes pour l'analyse VIP.")
+
+    st.divider()
+    if st.button("🔴 DÉCONNEXION SÉCURISÉE"):
         st.session_state["auth"] = False
+        st.session_state["accueil_vu"] = False # Retour à l'accueil pour nouvelle session
+        st.session_state["essais_foot_gratuits"] = 0 # Réinitialiser les essais gratuits
         st.rerun()
+
+st.divider()
+st.caption("© 2026 M'SIRI COMMANDEMENT - Lubumbashi, RDC. Tous droits réservés.")
