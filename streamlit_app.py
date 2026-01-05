@@ -122,58 +122,38 @@ if not st.session_state["accueil_vu"]:
         st.session_state["accueil_vu"] = True
         st.rerun()
 
-# --- FENÊTRE 2: DÉCOUVERTE (GRAPHIQUE + 2 ESSAIS FOOT + ACCÈS VIP) ---
-elif not st.session_state["auth"]:
-    st.title("🚀 Terminal de Découverte M'SIRI")
-    st.caption("Découvrez la puissance avant de rejoindre l'élite.")
+# --- SECTION FOOT AVEC 2 ESSAIS ---
+st.subheader("⚽ Analyse de Matchs (2 Essais Gratuits)")
 
-    # --- GRAPHIQUE LIVE (TOUJOURS VISIBLE) ---
-    st.subheader("📈 Marché Mondial en Direct")
-    st.components.v1.html("""
-        <div style="height:350px;">
-          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-          <script type="text/javascript">
-          new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "5", "theme": "dark", "container_id": "tv_chart_public"});
-          </script><div id="tv_chart_public"></div>
-        </div>
-    """, height=350)
-    st.caption("Données en temps réel fournies par TradingView.com")
-
-    st.divider()
+if st.session_state["essais_foot_gratuits"] < 2:
+    st.write(f"Il vous reste **{2 - st.session_state['essais_foot_gratuits']} analyses gratuites**.")
+    col_e1, col_e2 = st.columns(2)
+    with col_e1:
+        equipe_dom = st.text_input("Équipe à Domicile :", placeholder="Ex: TP Mazembe", key="eq_dom_free")
+    with col_e2:
+        equipe_ext = st.text_input("Équipe Visiteuse :", placeholder="Ex: Vita Club", key="eq_ext_free")
 
     if st.button("OBTENIR LE PRONOSTIC GRATUIT"):
-            if equipe_dom and equipe_ext:
-                st.session_state["essais_foot_gratuits"] += 1
-                
-                # ... ta logique de choix de résultat ...
-                pronostic_choisi = random.choice(resultats_possibles)
-                
-                # ON AFFICHE SANS FAIRE DE RERUN APRÈS
-                st.success(f"**ANALYSE M'SIRI :** {pronostic_choisi}")
-                st.balloons()
-            else:
-                st.warning("Veuillez saisir les noms des deux équipes.")
-                
-                # Génération de pronostic (simulé pour l'exemple)
-                import random
-                resultats_possibles = [
-                    f"Victoire de **{equipe_dom}**. Leur attaque est en feu à domicile.",
-                    f"Match nul probable. Les défenses des deux équipes sont très solides.",
-                    f"**{equipe_ext}** pourrait créer la surprise. Attention à leur vitesse en contre."
-                ]
-                pronostic_choisi = random.choice(resultats_possibles)
-                
-                st.success(f"**ANALYSE M'SIRI :** {pronostic_choisi}")
-                st.write("Indice de confiance : **75%**.")
-                st.write("Conseil : 'Moins de 3.5 buts' pourrait être une option sécurisée.")
-                st.info(f"Il vous reste {2 - st.session_state['essais_foot_gratuits']} essai(s) gratuit(s).")
-                st.rerun() # Rafraîchir pour mettre à jour le compteur
-            else:
-                st.warning("Veuillez saisir les noms des deux équipes.")
-    
+        if equipe_dom and equipe_ext:
+            st.session_state["essais_foot_gratuits"] += 1
+            
+            # Logique de pronostic
+            resultats_possibles = [
+                f"Victoire de **{equipe_dom}**. Leur attaque est en feu à domicile.",
+                f"Match nul probable. Les défenses sont très solides.",
+                f"**{equipe_ext}** pourrait créer la surprise à l'extérieur."
+            ]
+            pronostic_choisi = random.choice(resultats_possibles)
+            
+            # Affichage direct
+            st.success(f"**ANALYSE M'SIRI :** {pronostic_choisi}")
+            st.balloons()
+        else:
+            st.warning("Veuillez saisir les noms des deux équipes.")
 
-    st.divider()
-
+else: # <--- Ce 'else' doit être TOUT À GAUCHE, aligné avec le premier 'if'
+    st.error("🚫 Limite d'essais gratuits atteinte.")
+    st.warning("Passez en mode VIP pour des analyses illimitées.")
     # --- ACCÈS VIP ET PAIEMENT ---
     st.header("👑 Débloquez l'Accès VIP Complet")
     st.write("Le mode VIP vous donne un pouvoir illimité sur les analyses et les outils.")
@@ -183,7 +163,7 @@ elif not st.session_state["auth"]:
     with col_pay_info:
         st.subheader("1. Dépôt Orange Money")
         st.info(f"**Abonnement Mensuel : 10$**")
-        st.write(f"Envoyez votre paiement à ce numéro : **{+243898213650}**")
+        st.write(f"Envoyez votre paiement à ce numéro : **{+243 898213650 }**")
         
         whatsapp_link = f"https://wa.me/{+243973964067}?text=Bonjour%20Maire%20Général,%20je%20viens%20de%20faire%20un%20dépôt%20pour%20l'accès%20VIP."
         st.markdown(
