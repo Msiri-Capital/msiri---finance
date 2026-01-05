@@ -170,9 +170,7 @@ elif not st.session_state["auth"]:
                 st.rerun() # Rafraîchir pour mettre à jour le compteur
             else:
                 st.warning("Veuillez saisir les noms des deux équipes.")
-    else:
-        st.error("🚫 Limite d'essais gratuits atteinte pour les pronostics.")
-        st.warning("Passez en mode VIP pour des analyses illimitées et nos outils de trading avancés !")
+    
 
     st.divider()
 
