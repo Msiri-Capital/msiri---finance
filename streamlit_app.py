@@ -164,4 +164,4 @@ else:
         st.rerun()
 
 st.divider()
-st.caption("© 2026 M'SIRI CAPITAL - Lubumbashi. L'excellence financièrPrécisionision
+st.caption("© 2026 M'SIRI CAPITAL - Lubumbashi. L'excellence financièrPrécisionision.")
