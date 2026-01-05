@@ -108,7 +108,7 @@ elif not st.session_state["auth"]:
         st.write("### 1. Dépôt Orange Money")
         st.info("Abonnement : **10$ / Mois**")
         st.code(NUMERO_ORANGE_MONEY)
-        st.markdown(f"[🆘 CONTACT WHATSAPP](https://wa.me/{0973964067})")
+        st.markdown(f"[🆘 CONTACT WHATSAPP](https://wa.me/{+243973964067})")
     
     with col_pay2:
         st.write("### 2. Activation")
