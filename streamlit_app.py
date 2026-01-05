@@ -3,7 +3,59 @@ import pandas as pd
 import numpy as np
 import datetime
 import random # <--- LE MOTEUR DU HASARD EST ICI
+import streamlit as st
+import random
 
+# --- INITIALISATION DES COMPTEURS ---
+if "nb_visites" not in st.session_state:
+    st.session_state["nb_visites"] = 0 # Compteur de visites pour ta session
+if "essais_foot_gratuits" not in st.session_state:
+    st.session_state["essais_foot_gratuits"] = 0
+
+# Chaque fois que le script tourne, on compte une interaction (vue cachée simplifiée)
+st.session_state["nb_visites"] += 1
+
+# --- SECTION FOOT (CORRIGÉE) ---
+st.subheader("⚽ Analyseur de Pronostics (Mode Essai)")
+
+if st.session_state["essais_foot_gratuits"] < 2:
+    st.write(f"🎁 Il vous reste **{2 - st.session_state['essais_foot_gratuits']} analyses gratuites**.")
+    
+    col_e1, col_e2 = st.columns(2)
+    with col_e1:
+        eq_dom = st.text_input("Équipe à Domicile :", placeholder="Ex: TP Mazembe", key="pub_dom")
+    with col_e2:
+        eq_ext = st.text_input("Équipe Visiteuse :", placeholder="Ex: Lupopo", key="pub_ext")
+
+    if st.button("LANCER L'ANALYSE"):
+        if eq_dom and eq_ext:
+            # On incrémente AVANT d'afficher
+            st.session_state["essais_foot_gratuits"] += 1
+            
+            # Logique de résultat
+            res = random.choice([
+                f"Victoire de {eq_dom}. La forme actuelle favorise les locaux.",
+                f"Match nul. Les deux équipes se neutralisent au milieu.",
+                f"Avantage {eq_ext}. Attention à leur efficacité à l'extérieur."
+            ])
+            
+            # AFFICHAGE DIRECT (Sans st.rerun pour éviter que ça disparaisse)
+            st.success(f"**RÉSULTAT M'SIRI :** {res}")
+            st.balloons()
+        else:
+            st.warning("Entrez le nom des deux équipes.")
+else:
+    st.error("🚫 Limite d'essais atteinte. Passez VIP pour continuer.")
+
+# --- LA VUE CACHÉE DU MAIRE GÉNÉRAL (ADMIN) ---
+st.sidebar.markdown("---")
+with st.sidebar.expander("🔐 ESPACE COMMANDANT"):
+    admin_pass = st.text_input("Code Secret Admin :", type="password")
+    if admin_pass == "MAIRE243": # Ton mot de passe secret
+        st.write("### 📊 STATISTIQUES LIVE")
+        st.metric("Interactions Session", st.session_state["nb_visites"])
+        st.write("Ce compteur montre l'activité sur ton site depuis ton ouverture.")
+        st.info("Note : Pour un vrai compteur global, il faudrait une base de données, mais ceci te donne déjà une idée de l'engagement actuel.")
 # --- CONFIGURATION ET INITIALISATION ---
 if "auth" not in st.session_state:
     st.session_state["auth"] = False
@@ -89,20 +141,18 @@ elif not st.session_state["auth"]:
 
     st.divider()
 
-    # --- SECTION FOOT AVEC 2 ESSAIS ---
-    st.subheader("⚽ Analyse de Matchs (2 Essais Gratuits)")
-
-    if st.session_state["essais_foot_gratuits"] < 2:
-        st.write(f"Il vous reste **{2 - st.session_state['essais_foot_gratuits']} analyses gratuites**.")
-        col_e1, col_e2 = st.columns(2)
-        with col_e1:
-            equipe_dom = st.text_input("Équipe à Domicile :", placeholder="Ex: TP Mazembe", key="eq_dom_free")
-        with col_e2:
-            equipe_ext = st.text_input("Équipe Visiteuse :", placeholder="Ex: Vita Club", key="eq_ext_free")
-
-        if st.button("OBTENIR LE PRONOSTIC GRATUIT"):
+    if st.button("OBTENIR LE PRONOSTIC GRATUIT"):
             if equipe_dom and equipe_ext:
                 st.session_state["essais_foot_gratuits"] += 1
+                
+                # ... ta logique de choix de résultat ...
+                pronostic_choisi = random.choice(resultats_possibles)
+                
+                # ON AFFICHE SANS FAIRE DE RERUN APRÈS
+                st.success(f"**ANALYSE M'SIRI :** {pronostic_choisi}")
+                st.balloons()
+            else:
+                st.warning("Veuillez saisir les noms des deux équipes.")
                 
                 # Génération de pronostic (simulé pour l'exemple)
                 import random
