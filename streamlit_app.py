@@ -20,7 +20,7 @@ if "nb_visites" not in st.session_state:
 st.session_state["nb_visites"] += 1
 
 # --- VARIABLES ---
-NUMERO_ORANGE_MONEY = "+243 898 213 650" 
+NUMERO_ORANGE_MONEY = "+243898213650" 
 CODE_VIP_MOIS = "SLVC2026"        
 CODE_ADMIN = "MAIRE243"              
 
