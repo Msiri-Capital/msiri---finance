@@ -163,7 +163,7 @@ else: # <--- Ce 'else' doit être TOUT À GAUCHE, aligné avec le premier 'if'
     with col_pay_info:
         st.subheader("1. Dépôt Orange Money")
         st.info(f"**Abonnement Mensuel : 10$**")
-        st.write(f"Envoyez votre paiement à ce numéro : **{+243 898213650 }**")
+        st.write(f"Envoyez votre paiement à ce numéro : **{+243898213650}**")
         
         whatsapp_link = f"https://wa.me/{+243973964067}?text=Bonjour%20Maire%20Général,%20je%20viens%20de%20faire%20un%20dépôt%20pour%20l'accès%20VIP."
         st.markdown(
