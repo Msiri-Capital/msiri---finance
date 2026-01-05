@@ -105,7 +105,7 @@ elif not st.session_state["auth"]:
     with col_pay1:
         st.info("Abonnement : **10$ / Mois**")
         st.write(f"Envoyez par Orange Money au : **{NUMERO_ORANGE_MONEY}**")
-        st.markdown(f"[🆘 CONTACT WHATSAPP POUR LA CLÉ](https://wa.me/{+243 973 964 067})")
+        st.markdown(f"[🆘 CONTACT WHATSAPP POUR LA CLÉ](https://wa.me/{+243973964067})")
     
     with col_pay2:
         code_input = st.text_input("Entrez votre code d'activation :", type="password")
