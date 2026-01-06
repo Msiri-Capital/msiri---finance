@@ -98,10 +98,9 @@ elif not st.session_state["auth"]:
         st.warning("Passez en mode VIP pour continuer l'aventure.")
 
     st.divider()
-st.divider()
-    st.header("👥 Communauté M'SIRI : Déjà +120 Membres VIP")
+        st.header("👥 Communauté M'SIRI : Déjà +120 Membres VIP")
     
-    # Statistiques de confiance
+        # Statistiques de confiance
     c1, c2, c3 = st.columns(3)
     c1.metric("Clients Satisfaits", "124", "+12 ce matin")
     c2.metric("Pronostics Validés", "89%", "Précision IA")
@@ -109,7 +108,7 @@ st.divider()
 
     st.write("---")
     
-    # Zone de témoignages avec défilement (Slider ou Colonnes)
+        # Zone de témoignages avec défilement (Slider ou Colonnes)
     st.subheader("💬 Derniers retours du groupe privé WhatsApp")
     
     with st.expander("👉 VOIR LES 100+ COMMENTAIRES RÉCENTS", expanded=True):
