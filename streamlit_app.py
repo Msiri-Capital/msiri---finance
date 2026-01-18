@@ -165,9 +165,7 @@ data_perf = {
     "Confiance": ["92%", "88%", "94%", "85%"]
 }
 st.table(data_perf)
-    
-    
-    else:
+   else:
         st.error("🚫 LIMITE D'ESSAI ATTEINTE !")
         st.warning("Passez en mode VIP pour continuer l'aventure.")
 
