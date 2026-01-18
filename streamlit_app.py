@@ -164,10 +164,7 @@ data_perf = {
     "Résultat": ["3-1 (Validé ✅)", "2-2 (Validé ✅)", "1-0 (Validé ✅)", "2-1 (Validé ✅)"],
     "Confiance": ["92%", "88%", "94%", "85%"]
 }
-st.table(data_perf)
-   else:
-        st.error("🚫 LIMITE D'ESSAI ATTEINTE !")
-        st.warning("Passez en mode VIP pour continuer l'aventure.")
+st.table(data_perf)  
 
     # 3. SECTION COMMENTAIRES (C'est ici que ça bloquait)
     st.divider()
