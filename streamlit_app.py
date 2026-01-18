@@ -166,7 +166,7 @@ data_perf = {
 }
 st.table(data_perf)
     
-            else:
+    else:
                 st.warning("Veuillez remplir les deux noms.")
     else:
         st.error("🚫 LIMITE D'ESSAI ATTEINTE !")
