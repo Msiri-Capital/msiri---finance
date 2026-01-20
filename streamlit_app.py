@@ -189,7 +189,7 @@ st.table(data_perf)
 
     st.divider()
     
-    # 4. SectionSection Paiement
+    # 5. SectionSection Paiement
     st.header("👑 PASSER EN MODE VIP")
     col_pay1, col_pay2 = st.columns(2)
     with col_pay1:
