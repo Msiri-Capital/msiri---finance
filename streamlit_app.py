@@ -166,7 +166,7 @@ data_perf = {
 }
 st.table(data_perf)  
 
-# 4. SECTION COMMENTAIRES
+    # 4. SECTION COMMENTAIRES
     st.divider()
     st.header("👥 Communauté M'SIRI : Déjà +120 Membres VIP")
     
