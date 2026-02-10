@@ -115,8 +115,30 @@ else:
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "📚 ACADÉMIE"])
     
-    with t1:
-    
+   with t1:
+        st.subheader("⚽ Analyseur Poisson 2100")
+        # Changement des clés pour éviter l'erreur (v_f1 et v_f2)
+        v_f1 = st.text_input("🏠 Équipe Domicile", key="vip_f1")
+        v_f2 = st.text_input("🚀 Équipe Extérieure", key="vip_f2")
+        
+        if st.button("LANCER L'ANALYSE FOOT", key="btn_foot_vip"):
+            if v_f1 and v_f2:
+                with st.spinner("Calcul des probabilités..."):
+                    res = calcul_poisson_msiri(v_f1, v_f2)
+                    st.markdown(f"### 📊 Rapport : {v_f1} vs {v_f2}")
+                    
+                    col_res1, col_res2 = st.columns(2)
+                    with col_res1:
+                        st.write(f"**Victoire {v_f1} :** {res['win_a']:.1f}%")
+                        st.progress(res['win_a']/100)
+                    with col_res2:
+                        st.write(f"**Plus de 2.5 buts :** {res['over25']:.1f}%")
+                        st.progress(res['over25']/100)
+                        
+                    st.success(f"🎯 Score exact le plus probable : **{res['top'][0][0]}**")
+                    st.balloons()
+            else:
+                st.warning("⚠️ Veuillez entrer les noms des deux équipes.")
     with t2:
         st.subheader("Moteur NBA / International")
         st.info("Le basket est en cours d'optimisation pour la NBA ce soir.")
