@@ -14,9 +14,8 @@ if "keys_db" not in st.session_state:
     st.session_state["keys_db"] = {cle: None for cle in cles}
 
 # --- CONFIGURATION COMMANDANT ---
-NUMERO_COMMANDANT = "243973964067"  # Remplace par ton numéro (ex: 243898213650)
+NUMERO_COMMANDANT = "243XXXXXXXXX"  # Remplace par ton numéro (ex: 243898213650)
 TEXTE_WHATSAPP = "Salut%20Commandant,%20je%20viens%20du%20Terminal.%20Je%20veux%20ma%20clé%20VIP."
-# --- FONCTIONS TECHNIQUES ---
 def calcul_poisson_msiri(eq1, eq2):
     l1, l2 = random.uniform(1.1, 2.9), random.uniform(0.7, 1.9)
     def p(k, lamb): return (math.exp(-lamb) * (lamb**k)) / math.factorial(k)
