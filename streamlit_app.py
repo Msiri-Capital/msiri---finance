@@ -13,16 +13,13 @@ if "keys_db" not in st.session_state:
     cles = ["MS-77-X1", "MS-99-A1", "GD-00-11", "VIP-21-AA", "LUB-243-M"]
     st.session_state["keys_db"] = {cle: None for cle in cles}
 
-# --- CONFIGURATION COMMANDANT ---
-NUMERO_COMMANDANT = "243XXXXXXXXX"  # Remplace par ton numéro (ex: 243898213650)
-TEXTE_WHATSAPP = "Salut%20Commandant,%20je%20viens%20du%20Terminal.%20Je%20veux%20ma%20clé%20VIP."
-def calcul_poisson_msiri(eq1, eq2):
-    l1, l2 = random.uniform(1.1, 2.9), random.uniform(0.7, 1.9)
-    def p(k, lamb): return (math.exp(-lamb) * (lamb**k)) / math.factorial(k)
-    prob_a = sum(p(i, l1)*p(j, l2) for i in range(6) for j in range(i))
-    scores = sorted([(f"{i}-{j}", p(i,l1)*p(j,l2)) for i in range(4) for j in range(4)], key=lambda x: x[1], reverse=True)
-    return {"win_a": prob_a*100, "top": scores[:3], "over25": (1-p(0,l1+l2)-p(1,l1+l2)-p(2,l1+l2))*100}
+# --- CONFIGURATION DES COMMUNICATIONS ---
+# Le numéro où vous recevez l'argent (Affiché pour le transfert)
+NUMERO_ORANGE_MONEY = "+243 898 213 650" 
 
+# Le numéro où vous répondez aux clients (Pour le lien WhatsApp)
+# ATTENTION : Pas de "+", pas d'espaces pour le lien WhatsApp !
+NUMERO_WHATSAPP = "243973964067"
 def page_validation_paiement():
     st.balloons()
     progress = st.progress(0)
@@ -31,9 +28,22 @@ def page_validation_paiement():
         time.sleep(0.03)
         progress.progress(i+1)
         msg.text("🔗 Connexion au réseau Orange Money..." if i<50 else "💎 Génération de votre clé VIP unique...")
-    st.success("✅ ANALYSE TERMINÉE ! Contactez le Commandant pour votre clé.")
-    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/{NUMERO_OM}?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
-
+    
+    st.success("✅ PROCESSUS TERMINÉ !")
+    
+    # On utilise ici le NUMERO_WHATSAPP
+    url_wa = f"https://wa.me/{NUMERO_WHATSAPP}?text=Salut%20Commandant,%20j'ai%20payé%20via%20Orange.%20Voici%20ma%20preuve."
+    
+    st.markdown(f"""
+        <div style="background: #1e1e2f; padding: 20px; border-radius: 15px; border: 1px solid #25D366;">
+            <p style="color: white;">Cliquez ci-dessous pour m'envoyer la capture du paiement :</p>
+            <a href="{url_wa}" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer;">
+                    📲 ENVOYER LA PREUVE (WHATSAPP)
+                </button>
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
 # --- INTERFACE ---
 
 # BANDEAU DÉFILANT (Gains en temps réel)
