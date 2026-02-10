@@ -13,7 +13,7 @@ if "keys_db" not in st.session_state:
     cles = ["MS-77-X1", "MS-99-A1", "GD-00-11", "VIP-21-AA", "LUB-243-M"]
     st.session_state["keys_db"] = {cle: None for cle in cles}
 
-NUMERO_OM ="+243898213650" # Ton numéro Orange Money
+NUMERO_OM = "+243898213650" # Ton numéro Orange Money
 
 # --- FONCTIONS TECHNIQUES ---
 def calcul_poisson_msiri(eq1, eq2):
@@ -32,7 +32,7 @@ def page_validation_paiement():
         progress.progress(i+1)
         msg.text("🔗 Connexion au réseau Orange Money..." if i<50 else "💎 Génération de votre clé VIP unique...")
     st.success("✅ ANALYSE TERMINÉE ! Contactez le Commandant pour votre clé.")
-    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/{0973964067}?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
+    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/{NUMERO_OM}?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
 
 # --- INTERFACE ---
 
