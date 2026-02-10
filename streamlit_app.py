@@ -13,8 +13,9 @@ if "keys_db" not in st.session_state:
     cles = ["MS-77-X1", "MS-99-A1", "GD-00-11", "VIP-21-AA", "LUB-243-M"]
     st.session_state["keys_db"] = {cle: None for cle in cles}
 
-NUMERO_OM = "+243898213650" # Ton numéro Orange Money
-
+# --- CONFIGURATION COMMANDANT ---
+NUMERO_COMMANDANT = "243973964067"  # Remplace par ton numéro (ex: 243898213650)
+TEXTE_WHATSAPP = "Salut%20Commandant,%20je%20viens%20du%20Terminal.%20Je%20veux%20ma%20clé%20VIP."
 # --- FONCTIONS TECHNIQUES ---
 def calcul_poisson_msiri(eq1, eq2):
     l1, l2 = random.uniform(1.1, 2.9), random.uniform(0.7, 1.9)
