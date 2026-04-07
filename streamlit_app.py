@@ -19,7 +19,6 @@ NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
     # Utilise le jour de l'année pour changer la citation
     index = int(time.strftime("%j")) % len(citations)
     return citations[index]
-
 # --- CONFIGURATION ÉLITE ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 
