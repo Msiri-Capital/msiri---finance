@@ -21,7 +21,6 @@ NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
 NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
 # --- CONFIGURATION ÉLITE ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
-
 # 1. INITIALISATION DES BASES (Sécurité & Stats)
 if "auth" not in st.session_state: st.session_state["auth"] = False
 if "my_device" not in st.session_state: st.session_state["my_device"] = str(random.getrandbits(32))
