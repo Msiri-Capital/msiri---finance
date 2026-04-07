@@ -152,59 +152,60 @@ else:
             st.write(f"🎯 Score Probable : {res['top'][0][0]}")
    
     with t2:
-    st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
-    col_b1, col_b2 = st.columns(2)
-    with col_b1:
-        equipe_a = st.text_input("Équipe Domicile (ex: Lakers)")
-        moyenne_a = st.number_input("Moyenne de points marqués (Saison)", value=110.0)
-    with col_b2:
-        equipe_b = st.text_input("Équipe Extérieur (ex: Warriors)")
-        moyenne_b = st.number_input("Moyenne de points encaissés (Adversaire)", value=108.0)
+        st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+           equipe_a = st.text_input("Équipe Domicile (ex: Lakers)")
+           moyenne_a = st.number_input("Moyenne de points marqués (Saison)", value=110.0)
+        with col_b2:
+           equipe_b = st.text_input("Équipe Extérieur (ex: Warriors)")
+           moyenne_b = st.number_input("Moyenne de points encaissés (Adversaire)", value=108.0)
     
-    if st.button("📊 ANALYSER LE MATCH NBA"):
-        # Algorithme simplifié de projection NBA
-        projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
-        st.metric(label=f"Projection de points pour {equipe_a}", value=f"{projection:.1f} pts")
-        st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
+        if st.button("📊 ANALYSER LE MATCH NBA"):
+           # Algorithme simplifié de projection NBA
+           projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
+           st.metric(label=f"Projection de points pour {equipe_a}", value=f"{projection:.1f} pts")
+           st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
         
-      with t3:
-    st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
+    with t3:
+        st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
     
-    # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
-    st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
-    st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
+        # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
+        st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
+        st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
     
-    col_cap1, col_cap2 = st.columns(2)
-    with col_cap1:
-        capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
-        niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"])
+        col_cap1, col_cap2 = st.columns(2)
+        with col_cap1:
+           capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
+           niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"])
     
-    # Calculs logiques du Commandant
-    pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
-    mise_conseillee = capital_total * pourcentage
-    objectif_jour = capital_total * 0.15 # 15% de gain par jour est un bel objectif
+        # Calculs logiques du Commandant
+        pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
+        mise_conseillee = capital_total * pourcentage
+        objectif_jour = capital_total * 0.15 # 15% de gain par jour est un bel objectif
     
-    with col_cap2:
-        st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $")
-        st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} $")
+        with col_cap2:
+           st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $")
+           st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} $")
 
-    st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
+        st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
 
-    st.divider()
+        st.divider()
 
-    # --- LA DOCTRINE M'SIRI ---
-    st.markdown("""
-    ### 📜 Les 3 Lois d'Airain du Capital
-    1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
-    2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
-    3. **La Discipline du Monde des rois:** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.
+        # --- LA DOCTRINE M'SIRI ---
+        st.markdown("""
+        ### 📜 Les 3 Lois d'Airain du Capital
+        1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
+        2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
+        3. **La Discipline du Monde des rois:** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.
     
-    ---
-    ### 📖 Guide d'Utilisation du Terminal
-    * **Signaux Trading :** Actualisez la page toutes les 15 minutes.
-    * **Analyse Poisson :** Précision de 85% sur les grands championnats.
-    * **Retraits Orange Money :** Sécurisez 50% de vos bénéfices chaque dimanche.
-    """)      if st.sidebar.button("🔴 DÉCONNEXION"):
+        ---
+        ### 📖 Guide d'Utilisation du Terminal
+        * **Signaux Trading :** Actualisez la page toutes les 15 minutes.
+        * **Analyse Poisson :** Précision de 85% sur les grands championnats.
+        * **Retraits Orange Money :** Sécurisez 50% de vos bénéfices chaque dimanche.
+        """)
+if st.sidebar.button("🔴 DÉCONNEXION"):
         st.session_state["auth"] = False
         st.rerun()
 
