@@ -6,8 +6,7 @@ import time
 TITRE obtenir_citation_du_jour():
     citations = [
         "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
-        "si je tombe, relève moi et 
-aide moi à me retourner vers TOI. - Nicolas LEVANTE",
+        "si je tombe, relève moi et aide moi à me retourner vers TOI. - Nicolas LEVANTE",
         "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn",
         "Ne jugez pas chaque journée par votre récolte, mais par les graines que vous plantez. - R.L. Stevenson",
         "Le plus grand risque est de n'en prendre aucun. - Mark Zuckerberg",
