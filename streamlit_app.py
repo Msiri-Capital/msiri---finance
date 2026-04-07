@@ -48,7 +48,7 @@ def page_validation_paiement():
         progress.progress(i+1)
         msg.text("🔗 Connexion au réseau Orange Money..." if i<50 else "💎 Génération de votre clé VIP unique...")
     st.success("✅ ANALYSE TERMINÉE ! Contactez le Commandant pour votre clé.")
-    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/{NUMERO_OM}?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
+    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/{+243973964067}?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
 
 # --- INTERFACE ---
 
