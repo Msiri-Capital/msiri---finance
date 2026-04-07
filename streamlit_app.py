@@ -1,4 +1,3 @@
-elseseport streamlit as st
 import random
 import math
 import time
