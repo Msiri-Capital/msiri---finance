@@ -3,7 +3,7 @@ import random
 import math
 import time
 
-TITRE obtenir_citation_du_jour():
+def obtenir_citation_du_jour():
     citations = [
         "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
         "si je tombe, relève moi et aide moi à me retourner vers TOI. - Nicolas LEVANTE",
