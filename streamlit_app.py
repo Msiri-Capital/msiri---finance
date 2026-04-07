@@ -137,7 +137,7 @@ if not st.session_state["auth"]:
                 st.error("Clé incorrecte.")
 
 # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
-            else:
+    else:
     st.divider()
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "📚 ACADÉMIE"])
