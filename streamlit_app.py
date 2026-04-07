@@ -2,7 +2,6 @@ import streamlit as st
 import random
 import math
 import time
-
 def obtenir_citation_du_jour():
     citations = [
         "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
@@ -13,12 +12,14 @@ def obtenir_citation_du_jour():
         "La fortune sourit aux audacieux. - Virgile",
         "Le secret de la réussite est de faire des choses communes de manière peu commune. - John D. Rockefeller"
     ]
-    # --- CONFIGURATION ÉLITE ---
-NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
-NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
     # Utilise le jour de l'année pour changer la citation
     index = int(time.strftime("%j")) % len(citations)
     return citations[index]
+
+# APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
+# --- CONFIGURATION ÉLITE ---
+NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
+NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
 # --- CONFIGURATION ÉLITE ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 
