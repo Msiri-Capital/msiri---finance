@@ -3,6 +3,24 @@ import random
 import math
 import time
 
+TITRE obtenir_citation_du_jour():
+    citations = [
+        "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
+        "si je tombe, relève moi et 
+aide moi à me retourner vers TOI. - Nicolas LEVANTE",
+        "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn",
+        "Ne jugez pas chaque journée par votre récolte, mais par les graines que vous plantez. - R.L. Stevenson",
+        "Le plus grand risque est de n'en prendre aucun. - Mark Zuckerberg",
+        "La fortune sourit aux audacieux. - Virgile",
+        "Le secret de la réussite est de faire des choses communes de manière peu commune. - John D. Rockefeller"
+    ]
+    # --- CONFIGURATION ÉLITE ---
+NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
+NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
+    # Utilise le jour de l'année pour changer la citation
+    index = int(time.strftime("%j")) % len(citations)
+    return citations[index]
+
 # --- CONFIGURATION ÉLITE ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 
@@ -40,6 +58,8 @@ def page_validation_paiement():
 st.markdown("""<marquee style="color: #00ff00; background: #001a00; padding: 5px; font-weight: bold;">
 🟢 Gaston M. +450$ (BTC/USD) | 🟢 Membre #22 +120$ (NBA) | 🟢 Justin K. +85$ (Mazembe vs Lupopo) | 🟢 Signal IA validé : ETH +4.2%
 </marquee>""", unsafe_allow_html=True)
+# --- AFFICHAGE CITATION DU JOUR ---
+st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}")
 
 # TITRE LUXE
 st.title("🏛️ M'SIRI CAPITAL")
@@ -71,33 +91,53 @@ with col_t2:
 if not st.session_state["auth"]:
     st.divider()
     st.header("🔐 DÉVERROUILLER L'ACCÈS VIP")
+    
+    # --- LE BADGE DE PAIEMENT ---
+    st.markdown(f"""
+        <div style="background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%); 
+                    padding: 25px; border-radius: 20px; text-align: center; 
+                    box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.3); border: 1px solid rgba(255,255,255,0.2);">
+            <h2 style="color: white; margin-bottom: 10px; font-family: sans-serif;">💳 PAIEMENT ORANGE MONEY</h2>
+            <p style="font-size: 32px; color: white; font-weight: bold; letter-spacing: 2px; margin: 10px 0;">{NUMERO_OM}</p>
+            <p style="color: rgba(255,255,255,0.9); font-style: italic;">Au nom de : {NOM_AGENT}</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.write("") # Espace de respiration
+
+    # --- LA MARCHE À SUIVRE (LES ÉTAPES) ---
+    st.subheader("📝 Marche à suivre :")
+    col_step1, col_step2, col_step3 = st.columns(3)
+    
+    with col_step1:
+        st.info("**1. TRANSFERT**\n\nEnvoyez **10$** au numéro ci-dessus via votre menu Orange Money.")
+    
+    with col_step2:
+        st.info("**2. VALIDATION**\n\nCliquez sur le bouton '🚀 VALIDER MON PAIEMENT' ci-dessous.")
+        
+    with col_step3:
+        st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
+
+    # --- ACTIONS ---
+    st.write("")
     c1, c2 = st.columns(2)
     
     with c1:
-        st.write("### 💎 Avantages VIP")
-        st.write("- ✅ Pronostics Foot (Loi de Poisson)")
-        st.write("- ✅ Moteur NBA (Basket-ball)")
-        st.write("- ✅ Combiné Mixte IA")
-        st.write("- ✅ Signaux Trading Haute Précision")
-        
-        if st.button("📱 PAYER VIA ORANGE MONEY (10$)"):
+        if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
             page_validation_paiement()
             
     with c2:
-        st.write("### 🔑 J'ai déjà ma clé")
-        key = st.text_input("Entrez votre clé unique :", type="password")
-        if st.button("ACTIVER LE TERMINAL"):
+        # Champ de saisie de la clé déjà existant
+        key = st.text_input("🗝️ Entrez votre clé reçue :", type="password", placeholder="Ex: MS-77-X1")
+        if st.button("ACTIVER LE TERMINAL", use_container_width=True):
             if key in st.session_state["keys_db"]:
-                owner = st.session_state["keys_db"][key]
-                if owner is None or owner == st.session_state["my_device"]:
-                    st.session_state["keys_db"][key] = st.session_state["my_device"]
-                    st.session_state["auth"] = True
-                    st.rerun()
-                else: st.error("🚫 Clé déjà liée à un autre appareil !")
-            else: st.error("❌ Clé invalide.")
+                # (Ton code de validation habituel...)
+                st.session_state["auth"] = True
+                st.rerun()
+            else:
+                st.error("Clé incorrecte.")
 
-# --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
-else:
+# --- SECTION 3 : ESPACE VIP (FOOT & BASKET) --elstime
     st.divider()
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "📚 ACADÉMIE"])
