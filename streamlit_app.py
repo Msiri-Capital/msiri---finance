@@ -152,7 +152,7 @@ if not st.session_state["auth"]:
                     st.error("🚫 SÉCURITÉ : Cette clé est déjà verrouillée sur un autre appareil.")
                     st.info("Contactez le Commandant pour une réinitialisation ou une nouvelle clé.")
             else:
-                st.error("❌ Clé invalide ou inexistante.")time    
+                st.error("❌ Clé invalide ou inexistante.")   
     
 # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
 else:
@@ -179,7 +179,6 @@ else:
         with col_b2:
            equipe_b = st.text_input("Équipe Extérieur (ex: Warriors)")
            moyenne_b = st.number_input("Moyenne de points encaissés (Adversaire)", value=108.0)
-    
         if st.button("📊 ANALYSER LE MATCH NBA"):
            # Algorithme simplifié de projection NBA
            projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
@@ -227,37 +226,50 @@ else:
 if st.sidebar.button("🔴 DÉCONNEXION"):
         st.session_state["auth"] = False
         st.rerun()
-# --- SECTION ADMINISTRATION (CACHÉE) ---
+# --- ARCHITECTURE DE LA BARRE LATÉRALE ---
 with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=100) # Un logo pro par défaut
+    st.title("🏛️ NAVIGATION")
+    st.write(f"🆔 **ID Appareil :** `{st.session_state['my_device'][:10]}`")
+    
     st.divider()
+
+    # 1. BOUTON DE DÉCONNEXION (Visible seulement si connecté)
+    if st.session_state["auth"]:
+        if st.button("🔴 SE DÉCONNECTER", use_container_width=True):
+            st.session_state["auth"] = False
+            st.rerun()
+    
+    st.divider()
+
+    # 2. SECTION ADMINISTRATION (CACHÉE)
     with st.expander("🛠️ ADMINISTRATION M'SIRI"):
-        pwd = st.text_input("Mot de passe Admin", type="password")
+        pwd = st.text_input("Code Commandant", type="password")
         if pwd == ADMIN_PASSWORD:
-            st.success("Accès Commandant autorisé.")
+            st.success("Accès Autorisé")
             
-            # --- VUE D'ENSEMBLE DES CLÉS ---
+            # Gestion des clés
             st.write("### 📊 État des Clés")
-            for k, v in st.session_state["keys_db"].items():
-                col_k, col_v, col_btn = st.columns([2, 2, 1])
-                col_k.text(k)
-                
-                if v is None:
-                    col_v.warning("Libre")
-                else:
-                    col_v.success(f"Liée: {v[:8]}...") # Affiche un bout de l'ID
-                    if col_btn.button("♻️", key=f"reset_{k}"):
+            # On crée une copie pour éviter les erreurs de modification pendant la lecture
+            for k, v in list(st.session_state["keys_db"].items()):
+                c_k, c_v, c_b = st.columns([2, 2, 1])
+                c_k.caption(k)
+                if v:
+                    c_v.code(v[:6], language=None)
+                    if c_b.button("♻️", key=f"res_{k}"):
                         st.session_state["keys_db"][k] = None
                         st.rerun()
+                else:
+                    c_v.write("Libre")
             
-            # --- AJOUTER UNE NOUVELLE CLÉ ---
+            # Ajout de clé
             st.divider()
-            new_key = st.text_input("Nouvelle Clé à créer")
-            if st.button("➕ AJOUTER LA CLÉ"):
-                if new_key and new_key not in st.session_state["keys_db"]:
-                    st.session_state["keys_db"][new_key] = None
-                    st.success(f"Clé {new_key} ajoutée !")
+            nk = st.text_input("Nouvelle Clé")
+            if st.button("➕ CRÉER"):
+                if nk:
+                    st.session_state["keys_db"][nk] = None
                     st.rerun()
         elif pwd != "":
-            st.error("Identifiant incorrect.")
+            st.error("🔒 Accès refusé")
 st.divider()
 st.caption("© 2026 M'SIRI CAPITAL - Technologie de Lubumbashi.")
