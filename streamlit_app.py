@@ -2,6 +2,8 @@ import streamlit as st
 import random
 import math
 import time
+# --- SÉCURITÉ ADMIN ---
+ADMIN_PASSWORD = "BUNKEYA_BOSS_2026" # Change ce mot de passe !
 def obtenir_citation_du_jour():
     citations = [
         "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
@@ -123,18 +125,35 @@ if not st.session_state["auth"]:
     with c1:
         if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
             page_validation_paiement()
-            
     with c2:
-        # Champ de saisie de la clé déjà existant
-        key = st.text_input("🗝️ Entrez votre clé reçue :", type="password", placeholder="Ex: MS-77-X1")
-        if st.button("ACTIVER LE TERMINAL", use_container_width=True):
+        st.write("### 🔑 J'ai déjà ma clé")
+        key = st.text_input("Entrez votre clé unique :", type="password")
+        
+        if st.button("ACTIVER LE TERMINAL"):
             if key in st.session_state["keys_db"]:
-                # (Ton code de validation habituel...)
-                st.session_state["auth"] = True
-                st.rerun()
+                # Vérification du propriétaire
+                current_owner = st.session_state["keys_db"][key]
+                
+                # CAS 1 : La clé est neuve (personne ne l'a encore utilisée)
+                if current_owner is None:
+                    st.session_state["keys_db"][key] = st.session_state["my_device"]
+                    st.session_state["auth"] = True
+                    st.success("✅ PREMIÈRE ACTIVATION RÉUSSIE ! Cette clé est désormais liée à cet appareil uniquement.")
+                    time.sleep(2)
+                    st.rerun()
+                
+                # CAS 2 : C'est le bon propriétaire qui revient
+                elif current_owner == st.session_state["my_device"]:
+                    st.session_state["auth"] = True
+                    st.rerun()
+                
+                # CAS 3 : Un intrus tente d'utiliser la clé (Tablette ou autre téléphone)
+                else:
+                    st.error("🚫 SÉCURITÉ : Cette clé est déjà verrouillée sur un autre appareil.")
+                    st.info("Contactez le Commandant pour une réinitialisation ou une nouvelle clé.")
             else:
-                st.error("Clé incorrecte.")
-
+                st.error("❌ Clé invalide ou inexistante.")time    
+    
 # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
 else:
     st.divider()
@@ -208,6 +227,37 @@ else:
 if st.sidebar.button("🔴 DÉCONNEXION"):
         st.session_state["auth"] = False
         st.rerun()
-
+# --- SECTION ADMINISTRATION (CACHÉE) ---
+with st.sidebar:
+    st.divider()
+    with st.expander("🛠️ ADMINISTRATION M'SIRI"):
+        pwd = st.text_input("Mot de passe Admin", type="password")
+        if pwd == ADMIN_PASSWORD:
+            st.success("Accès Commandant autorisé.")
+            
+            # --- VUE D'ENSEMBLE DES CLÉS ---
+            st.write("### 📊 État des Clés")
+            for k, v in st.session_state["keys_db"].items():
+                col_k, col_v, col_btn = st.columns([2, 2, 1])
+                col_k.text(k)
+                
+                if v is None:
+                    col_v.warning("Libre")
+                else:
+                    col_v.success(f"Liée: {v[:8]}...") # Affiche un bout de l'ID
+                    if col_btn.button("♻️", key=f"reset_{k}"):
+                        st.session_state["keys_db"][k] = None
+                        st.rerun()
+            
+            # --- AJOUTER UNE NOUVELLE CLÉ ---
+            st.divider()
+            new_key = st.text_input("Nouvelle Clé à créer")
+            if st.button("➕ AJOUTER LA CLÉ"):
+                if new_key and new_key not in st.session_state["keys_db"]:
+                    st.session_state["keys_db"][new_key] = None
+                    st.success(f"Clé {new_key} ajoutée !")
+                    st.rerun()
+        elif pwd != "":
+            st.error("Identifiant incorrect.")
 st.divider()
 st.caption("© 2026 M'SIRI CAPITAL - Technologie de Lubumbashi.")
