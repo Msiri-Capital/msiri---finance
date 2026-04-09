@@ -46,7 +46,7 @@ keys_db = charger_cles_google()
 if "keys_db" not in st.session_state:
     st.session_state["keys_db"] = keys_db
 NUMERO_OM = "+243898213650" # Ton numéro Orange Money
-
+NOM_AGENT="MANGENDA"#<--- Assure-toi que cette lingne est bien ici
 # --- FONCTIONS TECHNIQUES ---
 def calcul_poisson_msiri(eq1, eq2):
     l1, l2 = random.uniform(1.1, 2.9), random.uniform(0.7, 1.9)
