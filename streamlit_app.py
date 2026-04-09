@@ -161,10 +161,10 @@ if not st.session_state["auth"]:
                    enregistrer_activation(key, st.session_state["my_device"])
                    # ---------------------------
             
-                    st.session_state["auth"] = True
-                    st.success("✅ CLÉ ACTIVÉE ET LIÉE À CET APPAREIL !")
-                    time.sleep(2)
-                    st.rerun()
+                     st.session_state["auth"] = True
+                     st.success("✅ CLÉ ACTIVÉE ET LIÉE À CET APPAREIL !")
+                     time.sleep(2)
+                     st.rerun()
                  
                 # CAS 1 : La clé est neuve (personne ne l'a encore utilisée)
                 if current_owner is None:
