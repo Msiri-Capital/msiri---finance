@@ -33,19 +33,24 @@ def obtenir_citation_du_jour():
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
-    # 1. On recharge les données pour être sûr d'avoir le dernier état
-    df = conn.read(worksheet="Sheet1", ttl="0s")
+    # On spécifie l'URL directement ici pour ne plus dépendre des secrets
+    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
     
-    # 2. On cherche la ligne de la clé et on y écrit l'ID de l'appareil
+    # 1. Lire les données
+    df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+    
+    # 2. Mettre à jour l'ID de l'appareil
     df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
     
-    # 3. On renvoie tout le tableau vers Google Sheets
-    conn.update(worksheet="Sheet1", data=dif)
+    # 3. Renvoyer vers Google
+    conn.update(spreadsheet=url, worksheet="Sheet1", data=df)
+
 def charger_cles_google():
+    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
     try:
-        df = conn.read(worksheet="Sheet1", ttl="0s")
+        df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
         return dict(zip(df.cle, df.appareil))
-    except:
+    except Exception as e:
         return {"MS-OFFLINE": None}
 
 # Chargement des clés dans le système
