@@ -259,7 +259,7 @@ with st.sidebar:
 
     # 2. SECTION ADMINISTRATION (CACHÉE)
     with st.expander("🛠️ ADMINISTRATION M'SIRI"):
-        pwd = st.text_input("Code Commandant", type="ADMIN_PASSWORD")
+        pwd = st.text_input("Code Commandant", type="password")
         if pwd == ADMIN_PASSWORD:
             st.success("Accès Autorisé")
             
