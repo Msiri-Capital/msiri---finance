@@ -6,7 +6,8 @@ from streamlit_gsheets import GSheetsConnection
 
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
-
+# --- SÉCURITÉ ADMIN ---
+ADMIN_PASSWORD = "BUNKEYA_BOSS_2026" # Change ce mot de passe !
 # --- 2. INITIALISATION DU SYSTÈME (LA CORRECTION ICI) ---
 if "auth" not in st.session_state:
     st.session_state["auth"] = False
