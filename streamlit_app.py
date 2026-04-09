@@ -10,7 +10,7 @@ def enregistrer_activation(cle_activee, device_id):
     # 2. Mettre à jour l'ID de l'appareil pour la clé correspondante
     df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
     # 3. Renvoyer le tableau mis à jour vers Google
-    conn.update(worksheet="Sheet1", citation
+    conn.update(worksheet="Sheet1", data=df)
 def obtenir_citation_du_jour():
     citations = [
         "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
