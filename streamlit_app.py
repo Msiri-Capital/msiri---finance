@@ -4,6 +4,13 @@ import math
 import time
 # --- SÉCURITÉ ADMIN ---
 ADMIN_PASSWORD = "BUNKEYA_BOSS_2026" # Change ce mot de passe !
+def enregistrer_activation(cle_activee, device_id):
+    # 1. Lire les données actuelles
+    df = conn.read(worksheet="Sheet1", ttl="0s")
+    # 2. Mettre à jour l'ID de l'appareil pour la clé correspondante
+    df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
+    # 3. Renvoyer le tableau mis à jour vers Google
+    conn.update(worksheet="Sheet1", citation
 def obtenir_citation_du_jour():
     citations = [
         "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
@@ -24,12 +31,26 @@ NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
 NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
 # --- CONFIGURATION ÉLITE ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
-# 1. INITIALISATION DES BASES (Sécurité & Stats)
-if "auth" not in st.session_state: st.session_state["auth"] = False
-if "my_device" not in st.session_state: st.session_state["my_device"] = str(random.getrandbits(32))
-if "keys_db" not in st.session_state:
-    cles = ["MS-77-X1", "MS-99-A1", "GD-00-11", "VIP-21-AA", "LUB-243-M"]
-    st.session_state["keys_db"] = {cle: None for cle in cles}
+from streamlit_gsheets import GSheetsConnection
+
+# --- CONNEXION À LA BASE DE DONNÉES GOOGLE ---
+# On crée la connexion
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+# Fonction pour charger les clés depuis Google
+def charger_cles_google():
+    # On lit la feuille de calcul
+    df = conn.read(worksheet="Sheet1", ttl="0s")
+    # On transforme le tableau en dictionnaire {cle: appareil}
+    return dict(zip(df.cle, df.appareil))
+
+# --- INITIALISATION ---
+# Au lieu de la liste fixe, on charge les vraies clés de Google
+try:
+    keys_db = charger_cles_google()
+except:
+    st.error("⚠️ Connexion à la base de données impossible.")
+    keys_db = {"MS-OFFLINE": None} # Clé de secours
 
 NUMERO_OM = "+243898213650" # Ton numéro Orange Money
 
