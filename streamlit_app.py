@@ -152,42 +152,30 @@ if not st.session_state["auth"]:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
         
-     
-     if st.button("ACTIVER LE TERMINAL"):
-             if key in st.session_state["keys_db"]:
-                 current_owner = st.session_state["keys_db"][key]
-        
-                 # Si la clé est libre (pas d'ID dans Google Sheets)
-                 if current_owner is None or str(current_owner) == 'nan' or current_owner == "":
-                     # --- ACTION CRUCIALE ICI ---
-                     enregistrer_activation(key, st.session_state["my_device"])
-                     # ---------------------------
-            
-                     st.session_state["auth"] = True
-                     st.success("✅ CLÉ ACTIVÉE ET LIÉE À CET APPAREIL !")
-                     time.sleep(2)
-                importt.rerun()        
-                # CAS 1 : La clé est neuve (personne ne l'a encore utilisée)
-                if current_owner is None:
+        # --- LIGNE 155 (BIEN ALIGNÉE SOUS 'key') ---
+        if st.button("ACTIVER LE TERMINAL"):
+            # --- LIGNE 156 (DOIT ÊTRE DÉCALÉE DE 4 ESPACES VERS LA DROITE) ---
+            if key in st.session_state["keys_db"]:
+                current_owner = st.session_state["keys_db"][key]
+                
+                if current_owner is None or str(current_owner) == 'nan' or current_owner == "":
+                    # Enregistrement sur Google et dans l'app
+                    enregistrer_activation(key, st.session_state["my_device"])
                     st.session_state["keys_db"][key] = st.session_state["my_device"]
                     st.session_state["auth"] = True
-                    st.success("✅ PREMIÈRE ACTIVATION RÉUSSIE ! Cette clé est désormais liée à cet appareil uniquement.")
+                    st.success("✅ CLÉ ACTIVÉE ET LIÉE !")
                     time.sleep(2)
                     st.rerun()
                 
-                # CAS 2 : C'est le bon propriétaire qui revient
                 elif current_owner == st.session_state["my_device"]:
                     st.session_state["auth"] = True
                     st.rerun()
-                
-                # CAS 3 : Un intrus tente d'utiliser la clé (Tablette ou autre téléphone)
                 else:
-                    st.error("🚫 SÉCURITÉ : Cette clé est déjà verrouillée sur un autre appareil.")
-                    st.info("Contactez le Commandant pour une réinitialisation ou une nouvelle clé.")
+                    st.error("🚫 Cette clé est déjà verrouillée ailleurs.")
             else:
-                st.error("❌ Clé invalide ou inexistante.")   
-    
-# --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
+                st.error("❌ Clé invalide ou inexistante.")
+
+ # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
 else:
     st.divider()
     st.header("🏆 ZONE DE COMBAT VIP")
