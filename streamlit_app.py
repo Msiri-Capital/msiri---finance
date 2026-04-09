@@ -153,7 +153,7 @@ if not st.session_state["auth"]:
         key = st.text_input("Entrez votre clé unique :", type="password")
         
      
-         if st.button("ACTIVER LE TERMINAL"):
+     if st.button("ACTIVER LE TERMINAL"):
              if key in st.session_state["keys_db"]:
                  current_owner = st.session_state["keys_db"][key]
         
