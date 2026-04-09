@@ -31,7 +31,7 @@ def obtenir_citation_du_jour():
 
 # APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
-conn = st.connection("gsheets", type=GSheetsConnection, spreadsheet="https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit" )
+conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
     # 1. On recharge les données pour être sûr d'avoir le dernier état
     df = conn.read(worksheet="Sheet1", ttl="0s")
