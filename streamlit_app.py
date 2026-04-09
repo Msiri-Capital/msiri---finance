@@ -1,4 +1,4 @@
-import streamlit as st
+defififmport streamlit as st
 import random
 import math
 import time
@@ -40,7 +40,7 @@ def enregistrer_activation(cle_activee, device_id):
     df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
     
     # 3. On renvoie tout le tableau vers Google Sheets
-    conn.update(worksheet="Sheet1", data=dif
+    conn.update(worksheet="Sheet1", data=dif)
 def charger_cles_google():
     try:
         df = conn.read(worksheet="Sheet1", ttl="0s")
