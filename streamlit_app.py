@@ -14,7 +14,21 @@ if "auth" not in st.session_state:
 if "my_device" not in st.session_state:
     # Génère un identifiant unique pour le téléphone/tablette
     st.session_state["my_device"] = str(random.getrandbits(32))
+def obtenir_citation_du_jour():
+    citations = [
+        "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
+        "si je tombe, relève moi et aide moi à me retourner vers TOI. - Nicolas LEVANTE",
+        "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn",
+        "Ne jugez pas chaque journée par votre récolte, mais par les graines que vous plantez. - R.L. Stevenson",
+        "Le plus grand risque est de n'en prendre aucun. - Mark Zuckerberg",
+        "La fortune sourit aux audacieux. - Virgile",
+        "Le secret de la réussite est de faire des choses communes de manière peu commune. - John D. Rockefeller"
+    ]
+    # Utilise le jour de l'année pour changer la citation
+    index = int(time.strftime("%j")) % len(citations)
+    return citations[index]
 
+# APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
