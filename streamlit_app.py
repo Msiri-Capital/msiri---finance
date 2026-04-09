@@ -1,57 +1,36 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
-
-# --- CONNEXION À LA BASE DE DONNÉES GOOGLE ---
-# On crée la connexion
-conn = st.connection("gsheets", type=GSheetsConnection)
-
-# Fonction pour charger les clés depuis Google
-def charger_cles_google():
-    # On lit la feuille de calcul
-    df = conn.read(worksheet="Sheet1", ttl="0s")
-    # On transforme le tableau en dictionnaire {cle: appareil}
-    return dict(zip(df.cle, df.appareil))
-
-# --- INITIALISATION ---
-# Au lieu de la liste fixe, on charge les vraies clés de Google
-try:
-    keys_db = charger_cles_google()
-except:
-    st.error("⚠️ Connexion à la base de données impossible.")
-    keys_db = {"MS-OFFLINE": None} # Clé de secours
 import random
 import math
 import time
-# --- SÉCURITÉ ADMIN ---
-ADMIN_PASSWORD = "BUNKEYA_BOSS_2026" # Change ce mot de passe !
-def enregistrer_activation(cle_activee, device_id):
-    # 1. Lire les données actuelles
-    df = conn.read(worksheet="Sheet1", ttl="0s")
-    # 2. Mettre à jour l'ID de l'appareil pour la clé correspondante
-    df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
-    # 3. Renvoyer le tableau mis à jour vers Google
-    conn.update(worksheet="Sheet1", data=df)
-def obtenir_citation_du_jour():
-    citations = [
-        "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte. - Winston Churchill",
-        "si je tombe, relève moi et aide moi à me retourner vers TOI. - Nicolas LEVANTE",
-        "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn",
-        "Ne jugez pas chaque journée par votre récolte, mais par les graines que vous plantez. - R.L. Stevenson",
-        "Le plus grand risque est de n'en prendre aucun. - Mark Zuckerberg",
-        "La fortune sourit aux audacieux. - Virgile",
-        "Le secret de la réussite est de faire des choses communes de manière peu commune. - John D. Rockefeller"
-    ]
-    # Utilise le jour de l'année pour changer la citation
-    index = int(time.strftime("%j")) % len(citations)
-    return citations[index]
+from streamlit_gsheets import GSheetsConnection
 
-# APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
-# --- CONFIGURATION ÉLITE ---
-NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
-NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
-# --- CONFIGURATION ÉLITE ---
+# --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 
+# --- 2. INITIALISATION DU SYSTÈME (LA CORRECTION ICI) ---
+if "auth" not in st.session_state:
+    st.session_state["auth"] = False
+
+if "my_device" not in st.session_state:
+    # Génère un identifiant unique pour le téléphone/tablette
+    st.session_state["my_device"] = str(random.getrandbits(32))
+
+# --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+def charger_cles_google():
+    try:
+        df = conn.read(worksheet="Sheet1", ttl="0s")
+        return dict(zip(df.cle, df.appareil))
+    except:
+        return {"MS-OFFLINE": None}
+
+# Chargement des clés dans le système
+keys_db = charger_cles_google()
+
+# On stocke keys_db dans le session_state pour que la suite du code le trouve
+if "keys_db" not in st.session_state:
+    st.session_state["keys_db"] = keys_db
 NUMERO_OM = "+243898213650" # Ton numéro Orange Money
 
 # --- FONCTIONS TECHNIQUES ---
@@ -71,7 +50,7 @@ def page_validation_paiement():
         progress.progress(i+1)
         msg.text("🔗 Connexion au réseau Orange Money..." if i<50 else "💎 Génération de votre clé VIP unique...")
     st.success("✅ ANALYSE TERMINÉE ! Contactez le Commandant pour votre clé.")
-    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/{+243973964067}?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
+    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
 
 # --- INTERFACE ---
 
