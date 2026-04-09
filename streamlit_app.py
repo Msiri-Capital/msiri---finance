@@ -1,4 +1,24 @@
 import streamlit as st
+from streamlit_gsheets import GSheetsConnection
+
+# --- CONNEXION À LA BASE DE DONNÉES GOOGLE ---
+# On crée la connexion
+conn = st.connection("gsheets", type=GSheetsConnection)
+
+# Fonction pour charger les clés depuis Google
+def charger_cles_google():
+    # On lit la feuille de calcul
+    df = conn.read(worksheet="Sheet1", ttl="0s")
+    # On transforme le tableau en dictionnaire {cle: appareil}
+    return dict(zip(df.cle, df.appareil))
+
+# --- INITIALISATION ---
+# Au lieu de la liste fixe, on charge les vraies clés de Google
+try:
+    keys_db = charger_cles_google()
+except:
+    st.error("⚠️ Connexion à la base de données impossible.")
+    keys_db = {"MS-OFFLINE": None} # Clé de secours
 import random
 import math
 import time
@@ -31,26 +51,6 @@ NUMERO_OM = "+243 898 213 650"  # Ton numéro Orange Money
 NOM_AGENT = "M'SIRI CAPITAL HUB" # Nom qui s'affiche lors du transfert
 # --- CONFIGURATION ÉLITE ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
-from streamlit_gsheets import GSheetsConnection
-
-# --- CONNEXION À LA BASE DE DONNÉES GOOGLE ---
-# On crée la connexion
-conn = st.connection("gsheets", type=GSheetsConnection)
-
-# Fonction pour charger les clés depuis Google
-def charger_cles_google():
-    # On lit la feuille de calcul
-    df = conn.read(worksheet="Sheet1", ttl="0s")
-    # On transforme le tableau en dictionnaire {cle: appareil}
-    return dict(zip(df.cle, df.appareil))
-
-# --- INITIALISATION ---
-# Au lieu de la liste fixe, on charge les vraies clés de Google
-try:
-    keys_db = charger_cles_google()
-except:
-    st.error("⚠️ Connexion à la base de données impossible.")
-    keys_db = {"MS-OFFLINE": None} # Clé de secours
 
 NUMERO_OM = "+243898213650" # Ton numéro Orange Money
 
