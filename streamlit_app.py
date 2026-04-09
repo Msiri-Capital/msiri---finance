@@ -1,4 +1,4 @@
-import streamlit as st
+import treamlit as st
 import random
 import math
 import time
@@ -152,20 +152,21 @@ if not st.session_state["auth"]:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
         
+     
          if st.button("ACTIVER LE TERMINAL"):
              if key in st.session_state["keys_db"]:
                  current_owner = st.session_state["keys_db"][key]
         
-                  # Si la clé est libre (pas d'ID dans Google Sheets)
-                  if current_owner is None or str(current_owner) == 'nan' or current_owner == "":
-                      # --- ACTION CRUCIALE ICI ---
-                      enregistrer_activation(key, st.session_state["my_device"])
-                      # ---------------------------
+                 # Si la clé est libre (pas d'ID dans Google Sheets)
+                 if current_owner is None or str(current_owner) == 'nan' or current_owner == "":
+                     # --- ACTION CRUCIALE ICI ---
+                     enregistrer_activation(key, st.session_state["my_device"])
+                     # ---------------------------
             
-                      st.session_state["auth"] = True
-                      st.success("✅ CLÉ ACTIVÉE ET LIÉE À CET APPAREIL !")
-                      time.sleep(2)
-                      st.rerun()        
+                     st.session_state["auth"] = True
+                     st.success("✅ CLÉ ACTIVÉE ET LIÉE À CET APPAREIL !")
+                     time.sleep(2)
+                importt.rerun()        
                 # CAS 1 : La clé est neuve (personne ne l'a encore utilisée)
                 if current_owner is None:
                     st.session_state["keys_db"][key] = st.session_state["my_device"]
