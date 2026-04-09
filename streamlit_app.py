@@ -32,7 +32,15 @@ def obtenir_citation_du_jour():
 # APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
-
+def enregistrer_activation(cle_activee, device_id):
+    # 1. On recharge les données pour être sûr d'avoir le dernier état
+    df = conn.read(worksheet="Sheet1", ttl="0s")
+    
+    # 2. On cherche la ligne de la clé et on y écrit l'ID de l'appareil
+    df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
+    
+    # 3. On renvoie tout le tableau vers Google Sheets
+    conn.update(worksheet="Sheet1", data=dif
 def charger_cles_google():
     try:
         df = conn.read(worksheet="Sheet1", ttl="0s")
@@ -143,12 +151,21 @@ if not st.session_state["auth"]:
     with c2:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
-        
         if st.button("ACTIVER LE TERMINAL"):
-            if key in st.session_state["keys_db"]:
-                # Vérification du propriétaire
-                current_owner = st.session_state["keys_db"][key]
-                
+    if key in st.session_state["keys_db"]:
+        current_owner = st.session_state["keys_db"][key]
+        
+        # Si la clé est libre (pas d'ID dans Google Sheets)
+        if current_owner is None or str(current_owner) == 'nan' or current_owner == "":
+            # --- ACTION CRUCIALE ICI ---
+            enregistrer_activation(key, st.session_state["my_device"])
+            # ---------------------------
+            
+            st.session_state["auth"] = True
+            st.success("✅ CLÉ ACTIVÉE ET LIÉE À CET APPAREIL !")
+            time.sleep(2)
+            st.rerun()
+                 
                 # CAS 1 : La clé est neuve (personne ne l'a encore utilisée)
                 if current_owner is None:
                     st.session_state["keys_db"][key] = st.session_state["my_device"]
