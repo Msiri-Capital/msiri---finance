@@ -33,17 +33,22 @@ def obtenir_citation_du_jour():
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
-    # On spécifie l'URL directement ici pour ne plus dépendre des secrets
-    
+    # Format d'exportation pour contourner le blocage HTTP
     url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/export?format=csv"
-    # 1. Lire les données
-    df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-    
-    # 2. Mettre à jour l'ID de l'appareil
-    df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
-    
-    # 3. Renvoyer vers Google
-    conn.update(spreadsheet=url, worksheet="Sheet1", data=df)
+    try:
+        # On lit le CSV directement
+        import pandas as pd
+        df = pd.read_csv(url)
+        
+        # On met à jour l'ID
+        df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
+        
+        # On renvoie vers Google (nécessite la connexion configurée)
+        conn.update(spreadsheet="https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit", data=df)
+        return True
+    except Exception as e:
+        st.error(f"Erreur d'accès : Vérifiez que le Sheets est en mode 'ÉDITEUR PUBLIC'.")
+        return False
 
 def charger_cles_google():
     url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
