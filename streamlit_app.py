@@ -39,17 +39,14 @@ def enregistrer_activation(cle_activee, device_id):
         # On lit le CSV directement
         import pandas as pd
         df = pd.read_csv(url)
+        # On renvoie vers Google avec le nom de l'onglet précis
+conn.update(
+    spreadsheet="https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit", 
+    worksheet="Sheet1", 
+    data=df
+)
+st.cache_data.clear() # TRÈS IMPORTANT : pour que l'app voie le changement de suite
         
-        # On met à jour l'ID
-        df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
-        
-        # On renvoie vers Google (nécessite la connexion configurée)
-        conn.update(spreadsheet="https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit", data=df)
-        return True
-    except Exception as e:
-        st.error(f"Erreur d'accès : Vérifiez que le Sheets est en mode 'ÉDITEUR PUBLIC'.")
-        return False
-
 def charger_cles_google():
     url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
     try:
