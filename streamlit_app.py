@@ -34,8 +34,8 @@ def obtenir_citation_du_jour():
 conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
     # On spécifie l'URL directement ici pour ne plus dépendre des secrets
-    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
     
+    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/export?format=csv"
     # 1. Lire les données
     df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
     
