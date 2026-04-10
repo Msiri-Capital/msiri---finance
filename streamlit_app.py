@@ -33,19 +33,25 @@ def obtenir_citation_du_jour():
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
-    # Format d'exportation pour contourner le blocage HTTP
-    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/export?format=csv"
+    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
     try:
-        # On lit le CSV directement
-        import pandas as pd
-        df = pd.read_csv(url)
-        # On renvoie vers Google avec le nom de l'onglet précis
-conn.update(
-    spreadsheet="https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit", 
-    worksheet="Sheet1", 
-    data=df
-)
-st.cache_data.clear() # TRÈS IMPORTANT : pour que l'app voie le changement de suite
+        # 1. Lecture des données
+        df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+        
+        # 2. Mise à jour de l'ID de l'appareil
+        df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
+        
+        # 3. Envoi vers Google Sheets (LA LIGNE QUI POSAIT PROBLÈME)
+        conn.update(spreadsheet=url, worksheet="Sheet1", data=df)
+        
+        # 4. Nettoyage du cache pour voir le résultat de suite
+        st.cache_data.clear()
+        return True
+
+    except Exception as e:
+        # ICI : On ferme le 'try' avec un 'except' pour éviter l'erreur de syntaxe
+        st.error(f"Erreur lors de l'enregistrement : {e}")
+        return False
         
 def charger_cles_google():
     url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
