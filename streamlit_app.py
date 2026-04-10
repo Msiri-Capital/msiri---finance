@@ -35,22 +35,22 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
     url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
     try:
-        # 1. Lecture des données
+        # 1. On lit tout le tableau
         df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
         
-        # 2. Mise à jour de l'ID de l'appareil
-        df.loc[df['cle'] == cle_activee, 'appareil'] = device_id
+        # 2. On s'assure que tout est traité comme du texte pour éviter les bugs de format
+        df['cle'] = df['cle'].astype(str)
         
-        # 3. Envoi vers Google Sheets (LA LIGNE QUI POSAIT PROBLÈME)
+        # 3. On fait la modification
+        df.loc[df['cle'] == str(cle_activee), 'appareil'] = str(device_id)
+        
+        # 4. On renvoie UNIQUEMENT les données propres
         conn.update(spreadsheet=url, worksheet="Sheet1", data=df)
         
-        # 4. Nettoyage du cache pour voir le résultat de suite
         st.cache_data.clear()
         return True
-
     except Exception as e:
-        # ICI : On ferme le 'try' avec un 'except' pour éviter l'erreur de syntaxe
-        st.error(f"Erreur lors de l'enregistrement : {e}")
+        st.error(f"Erreur 400 ou technique : {e}")
         return False
         
 def charger_cles_google():
