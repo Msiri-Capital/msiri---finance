@@ -152,47 +152,50 @@ if not st.session_state["auth"]:
         
     with col_step3:
         st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
-        # --- AJOUTER CECI AU DÉBUT DU SCRIPT (Zone de configuration) ---
-url = "https://docs.google.com/spreadsheets/d/1e4JSTYUN5j7N0xgRetPJIyWLnxcT4x4O/edit?usp=drivesdk&ouid=105317474397090802294&rtpof=true&sd=true" 
+# --- CONFIGURATION ---
+url = "https://docs.google.com/spreadsheets/d/1e4JSTYUN5j7N0xgRetPJIyWLnxcT4x4O/edit?usp=drivesdk" 
 
-# --- VOTRE BLOC DE VALIDATION ---
-if st.button("ACTIVER LE TERMINAL"):
-    # Maintenant, 'url' sera reconnu ici :
-    cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="true
+# --- INTERFACE D'ACCUEIL ---
+st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
-    # --- ACTIONS ---
-    st.write("")
-    c1, c2 = st.columns(2)
+c1, c2 = st.columns(2)
+
+with c1:
+    st.write("### 💳 Nouveau Membre")
+    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+        page_validation_paiement()
+
+with c2:
+    st.write("### 🔑 J'ai déjà ma clé")
+    # 1. On demande d'abord la clé
+    key = st.text_input("Entrez votre clé unique :", type="password")
     
-    with c1:
-        if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-            page_validation_paiement()
-    with c2:
-        st.write("### 🔑 J'ai déjà ma clé")
-        key = st.text_input("Entrez votre clé unique :", type="password")
-        # --- VOTRE BLOC DE VALIDATION (Version Blindée) ---
-if st.button("ACTIVER LE TERMINAL"):
-    # 1. Lecture immédiate
-    cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-    
-    # 2. Conversion en dictionnaire (Clé -> Appareil)
-    db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+    # 2. Le bouton de validation est SEUL et UNIQUE ici
+    if st.button("ACTIVER LE TERMINAL", use_container_width=True):
+        if key: # On vérifie que la clé n'est pas vide
+            # Lecture SANS CACHE
+            cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+            
+            # Conversion en dictionnaire
+            db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
 
-    if key in db:
-        # On récupère l'identifiant enregistré et on le nettoie
-        proprietaire = str(db[key]).strip()
-        
-        # CONDITION : Si la case est vide (nan) ou si c'est déjà cet appareil
-        if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
-            if enregistrer_activation(key, st.session_state["my_device"]):
-                st.session_state["auth"] = True
-                st.success("✅ ACCÈS VIP ACTIVÉ")
-                time.sleep(1) # Petit délai pour le message de succès
-                st.rerun()    # On relance pour afficher le contenu VIP
+            if key in db:
+                proprietaire = str(db[key]).strip()
+                
+                # Vérification du verrouillage matériel
+                if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
+                    if enregistrer_activation(key, st.session_state["my_device"]):
+                        st.session_state["auth"] = True
+                        st.success("✅ ACCÈS VIP ACTIVÉ")
+                        time.sleep(1)
+                        st.rerun()
+                else:
+                    st.error(f"🚫 CLÉ DÉJÀ LIÉE AU TERMINAL : {proprietaire[:8]}")
+            else:
+                st.error("❌ CLÉ INVALIDE")
         else:
-            st.error(f"🚫 CETTE CLÉ EST DÉJÀ LIÉE À L'APPAREIL : {proprietaire[:8]}...")
-    else:
-        st.error("❌ CLÉ INEXISTANTE DANS LA BASE M'SIRI.")
+            st.warning("⚠️ Veuillez entrer une clé avant d'activer.")
+    
 else:
     # --- PHASE 2 : ESPACE VIP (Uniquement si auth est True) ---
     st.sidebar.success("✅ Authentifié")
