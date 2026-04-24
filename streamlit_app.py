@@ -152,6 +152,13 @@ if not st.session_state["auth"]:
         
     with col_step3:
         st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
+        # --- AJOUTER CECI AU DÉBUT DU SCRIPT (Zone de configuration) ---
+url = "https://docs.google.com/spreadsheets/d/1e4JSTYUN5j7N0xgRetPJIyWLnxcT4x4O/edit?usp=drivesdk&ouid=105317474397090802294&rtpof=true&sd=true" 
+
+# --- VOTRE BLOC DE VALIDATION ---
+if st.button("ACTIVER LE TERMINAL"):
+    # Maintenant, 'url' sera reconnu ici :
+    cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="true
 
     # --- ACTIONS ---
     st.write("")
@@ -163,37 +170,29 @@ if not st.session_state["auth"]:
     with c2:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
-        # --- INITIALISATION (À mettre tout en haut du script) ---
-if "auth" not in st.session_state:
-    st.session_state["auth"] = False
+        # --- VOTRE BLOC DE VALIDATION (Version Blindée) ---
+if st.button("ACTIVER LE TERMINAL"):
+    # 1. Lecture immédiate
+    cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+    
+    # 2. Conversion en dictionnaire (Clé -> Appareil)
+    db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
 
-# --- LOGIQUE D'AFFICHAGE ---
-
-if not st.session_state["auth"]:
-    # --- PHASE 1 : FORMULAIRE DE CONNEXION ---
-    st.title("🔐 CONNEXION M'SIRI CAPITAL")
-    key = st.text_input("Entrez votre clé unique", type="password")
-
-    if st.button("ACTIVER LE TERMINAL"):
-        # Lecture en direct sans cache
-        cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-        db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
-
-        if key in db:
-            proprietaire = str(db[key]).strip() # On nettoie les espaces
-            
-            # Vérification stricte du verrouillage
-            if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
-                if enregistrer_activation(key, st.session_state["my_device"]):
-                    st.session_state["auth"] = True
-                    st.success("✅ Accès validé. Bienvenue Commandant.")
-                    time.sleep(1)
-                    st.rerun() # Relance pour afficher l'Espace VIP
-            else:
-                st.error(f"🚫 Alerte Sécurité : Clé déjà liée à l'appareil {proprietaire[:8]}")
+    if key in db:
+        # On récupère l'identifiant enregistré et on le nettoie
+        proprietaire = str(db[key]).strip()
+        
+        # CONDITION : Si la case est vide (nan) ou si c'est déjà cet appareil
+        if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
+            if enregistrer_activation(key, st.session_state["my_device"]):
+                st.session_state["auth"] = True
+                st.success("✅ ACCÈS VIP ACTIVÉ")
+                time.sleep(1) # Petit délai pour le message de succès
+                st.rerun()    # On relance pour afficher le contenu VIP
         else:
-            st.error("❌ Clé inexistante dans la base.")
-
+            st.error(f"🚫 CETTE CLÉ EST DÉJÀ LIÉE À L'APPAREIL : {proprietaire[:8]}...")
+    else:
+        st.error("❌ CLÉ INEXISTANTE DANS LA BASE M'SIRI.")
 else:
     # --- PHASE 2 : ESPACE VIP (Uniquement si auth est True) ---
     st.sidebar.success("✅ Authentifié")
