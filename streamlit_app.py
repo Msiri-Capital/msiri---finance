@@ -26,7 +26,7 @@ def obtenir_citation_du_jour():
     ]
     # Utilise le jour de l'année pour changer la citation
     index = int(time.strftime("%j")) % len(citations)
-    return citations[indeur]
+    return citations[indeur1]
 # APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
