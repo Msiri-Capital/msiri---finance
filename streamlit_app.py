@@ -164,32 +164,28 @@ if not st.session_state["auth"]:
     with c2:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
-        # --- LOGIQUE DE VÉRIFICATION EN TEMPS RÉEL ---
+        # --- VALIDATION SÉCURISÉE ---
 if st.button("ACTIVER LE TERMINAL"):
-    # On force la lecture SANS CACHE (ttl=0) pour avoir la vérité absolue de Google Sheets
-    check_df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-    
-    # On isole la ligne correspondant à la clé entrée
-    ligne_cle = check_df[check_df['cle'].astype(str) == str(key)]
-    
-    if not ligne_cle.empty:
-        # On récupère l'ID actuel enregistré dans Google Sheets
-        current_id = str(ligne_cle.iloc[0]['appareil']).strip()
+    # On recharge les clés EN DIRECT sans passer par le cache
+    cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+    # On transforme en dictionnaire pour la vérification
+    db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+
+    if key in db:
+        proprietaire = db[key]
         
-        # CONDITION DE SÉCURITÉ :
-        # On laisse passer SI : la case est vide (nan/None) OU si c'est déjà cet appareil
-        if current_id in ["nan", "None", "", "None"] or current_id == str(st.session_state["my_device"]):
+        # SI LA CASE EST VIDE (nan) OU SI C'EST LE MÊME APPAREIL
+        if proprietaire == "nan" or proprietaire == "None" or proprietaire == "" or proprietaire == st.session_state["my_device"]:
+            # On enregistre immédiatement
             if enregistrer_activation(key, st.session_state["my_device"]):
                 st.session_state["auth"] = True
-                st.success("✅ ACCÈS VIP DÉVERROUILLÉ.")
-                time.sleep(1)
+                st.success("✅ Accès validé. Verrouillage activé.")
                 st.rerun()
         else:
-            # SI L'ID EST DIFFÉRENT : ALERTE PIRATAGE
-            st.error(f"🚫 ERREUR : Cette clé est déjà liée à un autre terminal.")
-            st.warning("Contactez l'administration pour réinitialiser votre accès.")
+            st.error(f"🚫 Alerte Sécurité : Cette clé appartient déjà à l'appareil {proprietaire[:8]}...")
     else:
-        st.error("❌ CLÉ INVALIDE : Vérifiez votre code ou votre paiement.")
+        st.error("❌ Clé inexistante dans la base M'SIRI.")
+ 
 
  # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
 else:
