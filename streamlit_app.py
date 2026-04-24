@@ -3,44 +3,6 @@ import random
 import math
 import time
 from streamlit_gsheets import GSheetsConnection
-# 1. Initialisation de l'état (au tout début du script)
-if "auth" not in st.session_state:
-    st.session_state["auth"] = False
-
-# --- PHASE A : ÉCRAN D'ACCUEIL (SI NON AUTHENTIFIÉ) ---
-if not st.session_state["auth"]:
-    st.title("M'SIRI CAPITAL - ACCÈS RÉSERVÉ")
-    
-    key = st.text_input("Entrez votre Clé VIP", type="password")
-    
-    # Votre bloc de validation que vous avez cité :
-    if st.button("ACTIVER LE TERMINAL"):
-        check_df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-        ligne_cle = check_df[check_df['cle'].astype(str) == str(key)]
-        
-        if not ligne_cle.empty:
-            current_id = str(ligne_cle.iloc[0]['appareil']).strip()
-            
-            if current_id in ["nan", "None", ""] or current_id == str(st.session_state["my_device"]):
-                if enregistrer_activation(key, st.session_state["my_device"]):
-                    st.session_state["auth"] = True # <--- C'est ici que le verrou saute !
-                    st.success("✅ ACCÈS VIP DÉVERROUILLÉ.")
-                    time.sleep(1)
-                    st.rerun() # <--- On relance pour passer à la phase B
-            else:
-                st.error("🚫 Cette clé est déjà liée à un autre terminal.")
-        else:
-            st.error("❌ CLÉ INVALIDE.")
-
-# --- PHASE B : LE MODE VIP (SI AUTHENTIFIÉ) ---
-else:
-    st.sidebar.button("Se déconnecter", on_click=lambda: st.session_state.update({"auth": False}))
-    
-    st.title("🏆 ESPACE VIP M'SIRI CAPITAL")
-    st.write(f"Bienvenue, Terminal {st.session_state['my_device'][:8]}")
-    
-    # METTEZ TOUT VOTRE CONTENU VIP (Graphiques, Trading, etc.) ICI !
-    st.info("Le terminal est désormais actif et sécurisé.")
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 # --- SÉCURITÉ ADMIN ---
