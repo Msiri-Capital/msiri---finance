@@ -170,9 +170,15 @@ with c2:
     # 1. On demande d'abord la clé
     key = st.text_input("Entrez votre clé unique :", type="password")
     
+    # --- ÉTAPE 1 : LE MUR DE SÉCURITÉ (Obligatoire pour le else) ---
+if not st.session_state.get("auth", False):
+    
+    st.write("### 🔑 J'ai déjà ma clé")
+    key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
+
     # 2. Le bouton de validation est SEUL et UNIQUE ici
     if st.button("ACTIVER LE TERMINAL", use_container_width=True):
-        if key: # On vérifie que la clé n'est pas vide
+        if key: 
             # Lecture SANS CACHE
             cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
             
@@ -196,6 +202,7 @@ with c2:
         else:
             st.warning("⚠️ Veuillez entrer une clé avant d'activer.")
     
+# --- ÉTAPE 2 : LE ELSE (Maintenant il sait à qui il répond !) ---
 else:
     # --- PHASE 2 : ESPACE VIP (Uniquement si auth est True) ---
     st.sidebar.success("✅ Authentifié")
