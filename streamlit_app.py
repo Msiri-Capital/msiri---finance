@@ -1,4 +1,4 @@
-import streamlit as st
+indeurlstreamlit as st
 import random
 import math
 import time
@@ -26,7 +26,7 @@ def obtenir_citation_du_jour():
     ]
     # Utilise le jour de l'année pour changer la citation
     index = int(time.strftime("%j")) % len(citations)
-    return citations[indeurl
+    return citations[indeur]
 # APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
