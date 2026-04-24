@@ -158,53 +158,44 @@ url = "https://docs.google.com/spreadsheets/d/1e4JSTYUN5j7N0xgRetPJIyWLnxcT4x4O/
 # --- INTERFACE D'ACCUEIL ---
 st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
-c1, c2 = st.columns(2)
-
-with c1:
-    st.write("### 💳 Nouveau Membre")
-    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-        page_validation_paiement()
-
-with c2:
-    st.write("### 🔑 J'ai déjà ma clé")
-    # 1. On demande d'abord la clé
-    key = st.text_input("Entrez votre clé unique :", type="password")
-    
-    # --- ÉTAPE 1 : LE MUR DE SÉCURITÉ (Obligatoire pour le else) ---
+# LE MUR DE SÉCURITÉ DOIT COMMENCER ICI
 if not st.session_state.get("auth", False):
-    
-    st.write("### 🔑 J'ai déjà ma clé")
-    key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
+    c1, c2 = st.columns(2)
 
-    # 2. Le bouton de validation est SEUL et UNIQUE ici
-    if st.button("ACTIVER LE TERMINAL", use_container_width=True):
-        if key: 
-            # Lecture SANS CACHE
-            cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-            
-            # Conversion en dictionnaire
-            db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+    with c1:
+        st.write("### 💳 Nouveau Membre")
+        if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+            page_validation_paiement()
 
-            if key in db:
-                proprietaire = str(db[key]).strip()
-                
-                # Vérification du verrouillage matériel
-                if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
-                    if enregistrer_activation(key, st.session_state["my_device"]):
-                        st.session_state["auth"] = True
-                        st.success("✅ ACCÈS VIP ACTIVÉ")
-                        time.sleep(1)
-                        st.rerun()
+    with c2:
+        st.write("### 🔑 J'ai déjà ma clé")
+        # ON GARDE UNE SEULE SAISIE ICI
+        key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
+        
+        # LE BOUTON DE VALIDATION DANS LA COLONNE
+        if st.button("ACTIVER LE TERMINAL", use_container_width=True):
+            if key: 
+                # Lecture SANS CACHE
+                cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+                db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+
+                if key in db:
+                    proprietaire = str(db[key]).strip()
+                    if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
+                        if enregistrer_activation(key, st.session_state["my_device"]):
+                            st.session_state["auth"] = True
+                            st.success("✅ ACCÈS VIP ACTIVÉ")
+                            time.sleep(1)
+                            st.rerun()
+                    else:
+                        st.error(f"🚫 CLÉ DÉJÀ LIÉE AU TERMINAL : {proprietaire[:8]}")
                 else:
-                    st.error(f"🚫 CLÉ DÉJÀ LIÉE AU TERMINAL : {proprietaire[:8]}")
+                    st.error("❌ CLÉ INVALIDE")
             else:
-                st.error("❌ CLÉ INVALIDE")
-        else:
-            st.warning("⚠️ Veuillez entrer une clé avant d'activer.")
-    
-# --- ÉTAPE 2 : LE ELSE (Maintenant il sait à qui il répond !) ---
+                st.warning("⚠️ Entrez votre clé.")
+
+# --- LE ELSE (L'ESPACE VIP) ---
 else:
-    # --- PHASE 2 : ESPACE VIP (Uniquement si auth est True) ---
     st.sidebar.success("✅ Authentifié")
     if st.sidebar.button("Déconnexion"):
         st.session_state["auth"] = False
@@ -213,7 +204,6 @@ else:
     st.divider()
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "📚 ACADÉMIE"])
-
     with t1:
         st.subheader("Analyseur Poisson 2100")
         f1 = st.text_input("Domicile", key="f1")
