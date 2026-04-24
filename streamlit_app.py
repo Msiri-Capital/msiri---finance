@@ -163,35 +163,48 @@ if not st.session_state["auth"]:
     with c2:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
-        # --- VALIDATION SÉCURISÉE ---
-if st.button("ACTIVER LE TERMINAL"):
-    # On recharge les clés EN DIRECT sans passer par le cache
-    cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-    # On transforme en dictionnaire pour la vérification
-    db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+        # --- INITIALISATION (À mettre tout en haut du script) ---
+if "auth" not in st.session_state:
+    st.session_state["auth"] = False
 
-    if key in db:
-        proprietaire = db[key]
-        
-        # SI LA CASE EST VIDE (nan) OU SI C'EST LE MÊME APPAREIL
-        if proprietaire == "nan" or proprietaire == "None" or proprietaire == "" or proprietaire == st.session_state["my_device"]:
-            # On enregistre immédiatement
-            if enregistrer_activation(key, st.session_state["my_device"]):
-                st.session_state["auth"] = True
-                st.success("✅ Accès validé. Verrouillage activé.")
-                st.rerun()
+# --- LOGIQUE D'AFFICHAGE ---
+
+if not st.session_state["auth"]:
+    # --- PHASE 1 : FORMULAIRE DE CONNEXION ---
+    st.title("🔐 CONNEXION M'SIRI CAPITAL")
+    key = st.text_input("Entrez votre clé unique", type="password")
+
+    if st.button("ACTIVER LE TERMINAL"):
+        # Lecture en direct sans cache
+        cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+        db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+
+        if key in db:
+            proprietaire = str(db[key]).strip() # On nettoie les espaces
+            
+            # Vérification stricte du verrouillage
+            if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
+                if enregistrer_activation(key, st.session_state["my_device"]):
+                    st.session_state["auth"] = True
+                    st.success("✅ Accès validé. Bienvenue Commandant.")
+                    time.sleep(1)
+                    st.rerun() # Relance pour afficher l'Espace VIP
+            else:
+                st.error(f"🚫 Alerte Sécurité : Clé déjà liée à l'appareil {proprietaire[:8]}")
         else:
-            st.error(f"🚫 Alerte Sécurité : Cette clé appartient déjà à l'appareil {proprietaire[:8]}...")
-    else:
-        st.error("❌ Clé inexistante dans la base M'SIRI.")
- 
+            st.error("❌ Clé inexistante dans la base.")
 
- # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
 else:
+    # --- PHASE 2 : ESPACE VIP (Uniquement si auth est True) ---
+    st.sidebar.success("✅ Authentifié")
+    if st.sidebar.button("Déconnexion"):
+        st.session_state["auth"] = False
+        st.rerun()
+
     st.divider()
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "📚 ACADÉMIE"])
-    
+
     with t1:
         st.subheader("Analyseur Poisson 2100")
         f1 = st.text_input("Domicile", key="f1")
