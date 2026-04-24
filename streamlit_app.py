@@ -164,29 +164,32 @@ if not st.session_state["auth"]:
     with c2:
         st.write("### 🔑 J'ai déjà ma clé")
         key = st.text_input("Entrez votre clé unique :", type="password")
+        # --- LOGIQUE DE VÉRIFICATION EN TEMPS RÉEL ---
+if st.button("ACTIVER LE TERMINAL"):
+    # On force la lecture SANS CACHE (ttl=0) pour avoir la vérité absolue de Google Sheets
+    check_df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+    
+    # On isole la ligne correspondant à la clé entrée
+    ligne_cle = check_df[check_df['cle'].astype(str) == str(key)]
+    
+    if not ligne_cle.empty:
+        # On récupère l'ID actuel enregistré dans Google Sheets
+        current_id = str(ligne_cle.iloc[0]['appareil']).strip()
         
-        # --- LIGNE 155 (BIEN ALIGNÉE SOUS 'key') ---
-        if st.button("ACTIVER LE TERMINAL"):
-            # --- LIGNE 156 (DOIT ÊTRE DÉCALÉE DE 4 ESPACES VERS LA DROITE) ---
-            if key in st.session_state["keys_db"]:
-                current_owner = st.session_state["keys_db"][key]
-                
-                if current_owner is None or str(current_owner) == 'nan' or current_owner == "":
-                    # Enregistrement sur Google et dans l'app
-                    enregistrer_activation(key, st.session_state["my_device"])
-                    st.session_state["keys_db"][key] = st.session_state["my_device"]
-                    st.session_state["auth"] = True
-                    st.success("✅ CLÉ ACTIVÉE ET LIÉE !")
-                    time.sleep(2)
-                    st.rerun()
-                
-                elif current_owner == st.session_state["my_device"]:
-                    st.session_state["auth"] = True
-                    st.rerun()
-                else:
-                    st.error("🚫 Cette clé est déjà verrouillée ailleurs.")
-            else:
-                st.error("❌ Clé invalide ou inexistante.")
+        # CONDITION DE SÉCURITÉ :
+        # On laisse passer SI : la case est vide (nan/None) OU si c'est déjà cet appareil
+        if current_id in ["nan", "None", "", "None"] or current_id == str(st.session_state["my_device"]):
+            if enregistrer_activation(key, st.session_state["my_device"]):
+                st.session_state["auth"] = True
+                st.success("✅ ACCÈS VIP DÉVERROUILLÉ.")
+                time.sleep(1)
+                st.rerun()
+        else:
+            # SI L'ID EST DIFFÉRENT : ALERTE PIRATAGE
+            st.error(f"🚫 ERREUR : Cette clé est déjà liée à un autre terminal.")
+            st.warning("Contactez l'administration pour réinitialiser votre accès.")
+    else:
+        st.error("❌ CLÉ INVALIDE : Vérifiez votre code ou votre paiement.")
 
  # --- SECTION 3 : ESPACE VIP (FOOT & BASKET) ---
 else:
