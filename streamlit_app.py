@@ -26,13 +26,14 @@ def obtenir_citation_du_jour():
     ]
     # Utilise le jour de l'année pour changer la citation
     index = int(time.strftime("%j")) % len(citations)
-    return citations[index]
-
+    return citations[indeurl
 # APRES LA FONCTION, REVIENS BIEN AU BORD POUR LA SUITE DU CODE
 # --- 3. CONNEXION À LA BASE DE DONNÉES GOOGLE ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 def enregistrer_activation(cle_activee, device_id):
-    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
+    # --- NOUVELLE URL À METTRE À JOUR ---
+url = "https://docs.google.com/spreadsheets/d/18Gi0eZhy9OaxpZiI-5rnjSh3sjKDc81V9-hxjVB0D_A/edit?usp=sharing"
+    
     try:
         # 1. On lit tout le tableau
         df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
@@ -53,7 +54,9 @@ def enregistrer_activation(cle_activee, device_id):
         return False
         
 def charger_cles_google():
-    url = "https://docs.google.com/spreadsheets/d/15Y5Iw0nYVaqRQfJt89vUXNRjczcXXPEUmYhhBB-OCLA/edit"
+    # --- NOUVELLE URL À METTRE À JOUR ---
+url = "https://docs.google.com/spreadsheets/d/18Gi0eZhy9OaxpZiI-5rnjSh3sjKDc81V9-hxjVB0D_A/edit?usp=sharing"
+
     try:
         df = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
         return dict(zip(df.cle, df.appareil))
@@ -152,8 +155,9 @@ if not st.session_state["auth"]:
         
     with col_step3:
         st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
-# --- CONFIGURATION ---
-url = "https://docs.google.com/spreadsheets/d/1e4JSTYUN5j7N0xgRetPJIyWLnxcT4x4O/edit?usp=drivesdk" 
+    
+# --- NOUVELLE URL À METTRE À JOUR ---
+url = "https://docs.google.com/spreadsheets/d/18Gi0eZhy9OaxpZiI-5rnjSh3sjKDc81V9-hxjVB0D_A/edit?usp=sharing"
 
 # --- INTERFACE D'ACCUEIL ---
 st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
