@@ -157,7 +157,6 @@ if not st.session_state["auth"]:
 spreadsheet_id = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
 url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?tqx=out:csv&sheet=Sheet1"
   
-
         # --- VÉRIFICATION DE L'ACCÈS ---
 if not st.session_state.get("auth", False):
     st.write("### 🔑 Activation du Terminal")
@@ -166,37 +165,23 @@ if not st.session_state.get("auth", False):
     if st.button("ACTIVER LE TERMINAL", use_container_width=True):
         if key:
             try:
-                # --- CES LIGNES DOIVENT ÊTRE BIEN DÉCALÉES À DROITE ---
+                # 1. Connexion à la base
                 public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
                 cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
                 
-                # On respecte Cle (Majuscule) et appareil (Minuscule)
+                # 2. Création du dictionnaire (Cle / appareil)
                 db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
 
-                if key in db:
-                    # Ici tu rajoutes la suite de ta logique (st.session_state["auth"] = True, etc.)
-                    st.success("Clé valide !")
-                    st.session_state["auth"] = True
-                    st.rerun()
-                else:
-                    st.error("❌ Clé non reconnue dans la base.")
-
-            except Exception as e:
-                st.error(f"⚠️ Erreur système : {e}")
-        else:
-            st.warning("⚠️ Veuillez entrer une clé.")
-
-                
-                # Conversion en dictionnaire (Respect strict de la casse de ton Sheets)
-                # Cle (C majuscule) / appareil (minuscule)
-                db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
-
+                # 3. Logique de vérification
                 if key in db:
                     proprietaire = str(db[key]).strip()
                     
-                    # Vérification du verrouillage au terminal
-                    if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
-                        if enregistrer_activation(key, st.session_state["my_device"]):
+                    # Vérification du verrouillage matériel
+                    # On vérifie si la clé est libre (nan, None...) ou déjà liée à cet appareil
+                    if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state.get("my_device")):
+                        
+                        # Enregistrement et Activation
+                        if enregistrer_activation(key, st.session_state.get("my_device")):
                             st.session_state["auth"] = True
                             st.success("✅ SYSTÈME M'SIRI DÉVERROUILLÉ")
                             st.balloons()
@@ -206,6 +191,7 @@ if not st.session_state.get("auth", False):
                         st.error(f"🚫 CLÉ DÉJÀ LIÉE À UN AUTRE APPAREIL")
                 else:
                     st.error("❌ CLÉ INVALIDE")
+
             except Exception as e:
                 st.error(f"⚠️ Erreur de connexion à la base : {e}")
         else:
