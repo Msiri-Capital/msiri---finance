@@ -166,13 +166,25 @@ if not st.session_state.get("auth", False):
     if st.button("ACTIVER LE TERMINAL", use_container_width=True):
         if key:
             try:
-    # On utilise directement le lien de partage standard
-    public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
-    cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
-    
-    db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
-except Exception as e:
-    st.error(f"Tentative de reconnexion... {e}")
+                # --- CES LIGNES DOIVENT ÊTRE BIEN DÉCALÉES À DROITE ---
+                public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
+                cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
+                
+                # On respecte Cle (Majuscule) et appareil (Minuscule)
+                db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
+
+                if key in db:
+                    # Ici tu rajoutes la suite de ta logique (st.session_state["auth"] = True, etc.)
+                    st.success("Clé valide !")
+                    st.session_state["auth"] = True
+                    st.rerun()
+                else:
+                    st.error("❌ Clé non reconnue dans la base.")
+
+            except Exception as e:
+                st.error(f"⚠️ Erreur système : {e}")
+        else:
+            st.warning("⚠️ Veuillez entrer une clé.")
 
                 
                 # Conversion en dictionnaire (Respect strict de la casse de ton Sheets)
