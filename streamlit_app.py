@@ -166,8 +166,15 @@ if not st.session_state.get("auth", False):
     if st.button("ACTIVER LE TERMINAL", use_container_width=True):
         if key:
             try:
-                # Lecture forcée sans cache (ttl=0)
-                cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
+                # Remplace ton bloc de lecture par celui-ci
+try:
+    # On utilise directement le lien de partage standard
+    public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
+    cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
+    
+    db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
+except Exception as e:
+    st.error(f"Tentative de reconnexion... {e}")
                 
                 # Conversion en dictionnaire (Respect strict de la casse de ton Sheets)
                 # Cle (C majuscule) / appareil (minuscule)
