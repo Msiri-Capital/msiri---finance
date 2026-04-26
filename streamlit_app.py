@@ -155,8 +155,8 @@ if not st.session_state["auth"]:
         st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
         # --- NOUVELLE URL FORMATÉE ---
 spreadsheet_id = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
-url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?
-    
+url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?tqx=out:csv&sheet=Sheet1"
+  
 
         # --- VÉRIFICATION DE L'ACCÈS ---
 if not st.session_state.get("auth", False):
