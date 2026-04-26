@@ -165,7 +165,7 @@ if not st.session_state.get("auth", False):
 
     if st.button("ACTIVER LE TERMINAL", use_container_width=True):
         if key:
-            
+            # Remplace ton bloc de lecture par celui-ci
 try:
     # On utilise directement le lien de partage standard
     public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
