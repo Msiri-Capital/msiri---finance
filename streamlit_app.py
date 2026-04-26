@@ -153,10 +153,9 @@ if not st.session_state["auth"]:
         
     with col_step3:
         st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
-        # --- CONFIGURATION DE LA BASE MSIRI_PRO ---
-# ID extrait de ton nouveau lien
+        # --- NOUVELLE URL FORMATÉE ---
 spreadsheet_id = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
-url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/export?format=csv"
+url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?
     
 
         # --- VÉRIFICATION DE L'ACCÈS ---
