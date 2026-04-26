@@ -173,29 +173,40 @@ if not st.session_state.get("auth", False):
         st.write("### 🔑 J'ai déjà ma clé")
         # ON GARDE UNE SEULE SAISIE ICI
         key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
-        
-        # LE BOUTON DE VALIDATION DANS LA COLONNE
-        if st.button("ACTIVER LE TERMINAL", use_container_width=True):
-            if key: 
-                # Lecture SANS CACHE
+        # --- VÉRIFICATION DE L'ACCÈS ---
+if not st.session_state.get("auth", False):
+    st.write("### 🔑 Activation du Terminal")
+    key = st.text_input("Entrez votre clé unique :", type="password", key="main_key")
+
+    if st.button("ACTIVER LE TERMINAL", use_container_width=True):
+        if key:
+            try:
+                # Lecture forcée sans cache (ttl=0)
                 cles_actuelles = conn.read(spreadsheet=url, worksheet="Sheet1", ttl="0s")
-                db = dict(zip(cles_actuelles.cle.astype(str), cles_actuelles.appareil.astype(str)))
+                
+                # Conversion en dictionnaire (Respect strict de la casse de ton Sheets)
+                # Cle (C majuscule) / appareil (minuscule)
+                db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
 
                 if key in db:
                     proprietaire = str(db[key]).strip()
+                    
+                    # Vérification du verrouillage au terminal
                     if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state["my_device"]):
                         if enregistrer_activation(key, st.session_state["my_device"]):
                             st.session_state["auth"] = True
-                            st.success("✅ ACCÈS VIP ACTIVÉ")
+                            st.success("✅ SYSTÈME M'SIRI DÉVERROUILLÉ")
+                            st.balloons()
                             time.sleep(1)
                             st.rerun()
                     else:
-                        st.error(f"🚫 CLÉ DÉJÀ LIÉE AU TERMINAL : {proprietaire[:8]}")
+                        st.error(f"🚫 CLÉ DÉJÀ LIÉE À UN AUTRE APPAREIL")
                 else:
                     st.error("❌ CLÉ INVALIDE")
-            else:
-                st.warning("⚠️ Entrez votre clé.")
-
+            except Exception as e:
+                st.error(f"⚠️ Erreur de connexion à la base : {e}")
+        else:
+            st.warning("⚠️ Veuillez saisir une clé.")
 # --- LE ELSE (L'ESPACE VIP) ---
 else:
     st.sidebar.success("✅ Authentifié")
