@@ -154,25 +154,7 @@ if not st.session_state["auth"]:
     with col_step3:
         st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
     
-# --- NOUVELLE URL À METTRE À JOUR ---
-url = "https://docs.google.com/spreadsheets/d/18Gi0eZhy9OaxpZiI-5rnjSh3sjKDc81V9-hxjVB0D_A/edit?usp=sharing"
 
-# --- INTERFACE D'ACCUEIL ---
-st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
-
-# LE MUR DE SÉCURITÉ DOIT COMMENCER ICI
-if not st.session_state.get("auth", False):
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.write("### 💳 Nouveau Membre")
-        if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-            page_validation_paiement()
-
-    with c2:
-        st.write("### 🔑 J'ai déjà ma clé")
-        # ON GARDE UNE SEULE SAISIE ICI
-        key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
         # --- VÉRIFICATION DE L'ACCÈS ---
 if not st.session_state.get("auth", False):
     st.write("### 🔑 Activation du Terminal")
