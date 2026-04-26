@@ -157,45 +157,65 @@ if not st.session_state["auth"]:
 spreadsheet_id = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
 url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?tqx=out:csv&sheet=Sheet1"
   
-        # --- VÉRIFICATION DE L'ACCÈS ---
+        # --- INTERFACE D'ACCUEIL ---
+st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
+
+# LE MUR DE SÉCURITÉ COMMENCE ICI
 if not st.session_state.get("auth", False):
-    st.write("### 🔑 Activation du Terminal")
-    key = st.text_input("Entrez votre clé unique :", type="password", key="main_key")
+    c1, c2 = st.columns(2)
 
-    if st.button("ACTIVER LE TERMINAL", use_container_width=True):
-        if key:
-            try:
-                # 1. Connexion à la base
-                public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
-                cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
-                
-                # 2. Création du dictionnaire (Cle / appareil)
-                db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
+    with c1:
+        st.write("### 💳 Nouveau Membre")
+        if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+            page_validation_paiement()
 
-                # 3. Logique de vérification
-                if key in db:
-                    proprietaire = str(db[key]).strip()
+    with c2:
+        st.write("### 🔑 J'ai déjà ma clé")
+        # Saisie de la clé unique
+        key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
+        
+        # Le bouton de validation déclenche la vérification
+        if st.button("ACTIVER LE TERMINAL", use_container_width=True):
+            if key:
+                try:
+                    # 1. Connexion à la base (Lien public configuré)
+                    public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
+                    cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
                     
-                    # Vérification du verrouillage matériel
-                    # On vérifie si la clé est libre (nan, None...) ou déjà liée à cet appareil
-                    if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state.get("my_device")):
-                        
-                        # Enregistrement et Activation
-                        if enregistrer_activation(key, st.session_state.get("my_device")):
-                            st.session_state["auth"] = True
-                            st.success("✅ SYSTÈME M'SIRI DÉVERROUILLÉ")
-                            st.balloons()
-                            time.sleep(1)
-                            st.rerun()
-                    else:
-                        st.error(f"🚫 CLÉ DÉJÀ LIÉE À UN AUTRE APPAREIL")
-                else:
-                    st.error("❌ CLÉ INVALIDE")
+                    # 2. Dictionnaire (Respect strict Cle / appareil)
+                    db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
 
-            except Exception as e:
-                st.error(f"⚠️ Erreur de connexion à la base : {e}")
-        else:
-            st.warning("⚠️ Veuillez saisir une clé.")
+                    # 3. Logique de vérification
+                    if key in db:
+                        proprietaire = str(db[key]).strip()
+                        
+                        # Vérification du verrouillage matériel
+                        if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state.get("my_device")):
+                            if enregistrer_activation(key, st.session_state.get("my_device")):
+                                st.session_state["auth"] = True
+                                st.success("✅ SYSTÈME M'SIRI DÉVERROUILLÉ")
+                                st.balloons()
+                                time.sleep(1)
+                                st.rerun()
+                        else:
+                            st.error("🚫 CLÉ DÉJÀ LIÉE À UN AUTRE APPAREIL")
+                    else:
+                        st.error("❌ CLÉ INVALIDE")
+
+                except Exception as e:
+                    st.error(f"⚠️ Erreur de connexion : {e}")
+            else:
+                st.warning("⚠️ Veuillez saisir une clé.")
+
+# --- SORTIE DU MUR DE SÉCURITÉ (ESPACE VIP) ---
+else:
+    st.sidebar.success("✅ Authentifié")
+    if st.sidebar.button("Déconnexion"):
+        st.session_state["auth"] = False
+        st.rerun()
+    
+    # Ton contenu VIP commence ici
+    st.header("🏆 BIENVENUE DANS L'ESPACE VIP")
 # --- LE ELSE (L'ESPACE VIP) ---
 else:
     st.sidebar.success("✅ Authentifié")
