@@ -214,10 +214,28 @@ else:
         st.session_state["auth"] = False
         st.rerun()
     
-    # Ton contenu VIP commence ici
+# --- LE ELSE (DÉBUT DE L'ESPACE VIP) ---
+else:
+    # Tout ce qui est écrit ici est invisible tant que la clé n'est pas validée
+    st.sidebar.success("✅ Authentifié")
+    
+    if st.sidebar.button("Déconnexion"):
+        st.session_state["auth"] = False
+        st.rerun()
+
     st.header("🏆 BIENVENUE DANS L'ESPACE VIP")
-else:    
-    # --- LE ELSE (L'ESPACE VIP) ---
+    st.write(f"Ravi de vous revoir, **{st.session_state.get('my_device', 'Membre')}** !")
+
+    # --- TES OUTILS FINANCIERS ICI ---
+    st.subheader("📊 Tableau de bord M'SIRI")
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Capital", "1,250 $", "+5%")
+    col2.metric("Objectif 27 ans", "1M $", "En cours")
+    col3.metric("Statut", "Actif")
+
+    # Ajoute ici le reste de tes fonctionnalités (Graphiques, Tableaux, etc.)
+    st.info("💡 Conseil du jour : La discipline est le pont entre les objectifs et l'accomplissement.")
 
     st.sidebar.success("✅ Authentifié")
     if st.sidebar.button("Déconnexion"):
