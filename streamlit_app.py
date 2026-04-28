@@ -213,38 +213,28 @@ else:
     if st.sidebar.button("Déconnexion"):
         st.session_state["auth"] = False
         st.rerun()
-    
-# --- LE ELSE (DÉBUT DE L'ESPACE VIP) ---
 else:
-    # Tout ce qui est écrit ici est invisible tant que la clé n'est pas validée
+    # 1. Barre latérale unique
     st.sidebar.success("✅ Authentifié")
-    
-    if st.sidebar.button("Déconnexion"):
+    if st.sidebar.button("Déconnexion", key="logout_btn"):
         st.session_state["auth"] = False
         st.rerun()
 
+    # 2. En-tête et Metrics
     st.header("🏆 BIENVENUE DANS L'ESPACE VIP")
-    st.write(f"Ravi de vous revoir, **{st.session_state.get('my_device', 'Membre')}** !")
-
-    # --- TES OUTILS FINANCIERS ICI ---
-    st.subheader("📊 Tableau de bord M'SIRI")
+    st.write(f"Ravi de vous revoir, **Maire Général** !")
     
     col1, col2, col3 = st.columns(3)
-    col1.metric("Capital", "1,250 $", "+5%")
-    col2.metric("Objectif 27 ans", "1M $", "En cours")
+    col1.metric("Capital Base", "250 $", "+5%") # Ton point de départ
+    col2.metric("Objectif 27 ans", "1M $", "0.025%") # On commence petit, on finit géant
     col3.metric("Statut", "Actif")
 
-    # Ajoute ici le reste de tes fonctionnalités (Graphiques, Tableaux, etc.)
-    st.info("💡 Conseil du jour : La discipline est le pont entre les objectifs et l'accomplissement.")
-
-    st.sidebar.success("✅ Authentifié")
-    if st.sidebar.button("Déconnexion"):
-        st.session_state["auth"] = False
-        st.rerun()
-
     st.divider()
+
+    # 3. La Zone de Combat (Tabs)
     st.header("🏆 ZONE DE COMBAT VIP")
-    t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "📚 ACADÉMIE"])
+    t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "🎓 ACADÉMIE"])
+
     with t1:
         st.subheader("Analyseur Poisson 2100")
         f1 = st.text_input("Domicile", key="f1")
@@ -269,9 +259,11 @@ else:
            projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
            st.metric(label=f"Projection de points pour {equipe_a}", value=f"{projection:.1f} pts")
            st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
-        
+ 
     with t3:
         st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
+        st.write("### 📖 Leçon 1 : La gestion du risque")
+        st.info("Le secret des millionnaires n'est pas de gagner gros, mais de ne jamais perdre son capital de base.")
     
         # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
         st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
