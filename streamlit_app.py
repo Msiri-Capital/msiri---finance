@@ -216,8 +216,9 @@ else:
     
     # Ton contenu VIP commence ici
     st.header("🏆 BIENVENUE DANS L'ESPACE VIP")
-# --- LE ELSE (L'ESPACE VIP) ---
-else:
+else:    
+    # --- LE ELSE (L'ESPACE VIP) ---
+
     st.sidebar.success("✅ Authentifié")
     if st.sidebar.button("Déconnexion"):
         st.session_state["auth"] = False
