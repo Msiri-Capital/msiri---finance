@@ -213,7 +213,7 @@ else:
     if st.sidebar.button("Déconnexion"):
         st.session_state["auth"] = False
         st.rerun()
-else:
+
     # 1. Barre latérale unique
     st.sidebar.success("✅ Authentifié")
     if st.sidebar.button("Déconnexion", key="logout_btn"):
