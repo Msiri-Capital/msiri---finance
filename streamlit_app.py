@@ -122,118 +122,44 @@ with col_t2:
     st.error("📉 GOLD : VENTE")
     st.divider()
     st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
-
-# --- SECTION 2 : ACCÈS VIP ---
-if not st.session_state["auth"]:
-    st.divider()
-    st.header("🔐 DÉVERROUILLER L'ACCÈS VIP")
-    
-    # --- LE BADGE DE PAIEMENT ---
-    st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%); 
-                    padding: 25px; border-radius: 20px; text-align: center; 
-                    box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.3); border: 1px solid rgba(255,255,255,0.2);">
-            <h2 style="color: white; margin-bottom: 10px; font-family: sans-serif;">💳 PAIEMENT ORANGE MONEY</h2>
-            <p style="font-size: 32px; color: white; font-weight: bold; letter-spacing: 2px; margin: 10px 0;">{NUMERO_OM}</p>
-            <p style="color: rgba(255,255,255,0.9); font-style: italic;">Au nom de : {NOM_AGENT}</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    st.write("") # Espace de respiration
-
-    # --- LA MARCHE À SUIVRE (LES ÉTAPES) ---
-    st.subheader("📝 Marche à suivre :")
-    col_step1, col_step2, col_step3 = st.columns(3)
-    
-    with col_step1:
-        st.info("**1. TRANSFERT**\n\nEnvoyez **10$** au numéro ci-dessus via votre menu Orange Money.")
-    
-    with col_step2:
-        st.info("**2. VALIDATION**\n\nCliquez sur le bouton '🚀 VALIDER MON PAIEMENT' ci-dessous.")
-        
-    with col_step3:
-        st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d'écran pour recevoir votre clé VIP instantanée.")
-        # --- NOUVELLE URL FORMATÉE ---
-spreadsheet_id = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
-url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/gviz/tq?tqx=out:csv&sheet=Sheet1"
-  
-        # --- INTERFACE D'ACCUEIL ---
-st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
-
-# LE MUR DE SÉCURITÉ COMMENCE ICI
+# --- SECTION 2 : ACCÈS LIBRE (SÉCURITÉ DÉSACTIVÉE TEMPORAIREMENT) ---
 if not st.session_state.get("auth", False):
+    st.divider()
+    st.header("🔓 ACCÈS LIBRE AU TERMINAL (MODE TEST)")
+    
     c1, c2 = st.columns(2)
 
     with c1:
         st.write("### 💳 Nouveau Membre")
-        if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-            page_validation_paiement()
+        if st.button("🚀 DÉCOUVRIR LE SYSTÈME", use_container_width=True):
+            # On simule une petite attente pour faire "pro"
+            with st.spinner("Initialisation de l'accès..."):
+                time.sleep(2)
+                st.session_state["auth"] = True
+                st.success("✅ BIENVENUE DANS M'SIRI !")
+                st.rerun()
 
     with c2:
-        st.write("### 🔑 J'ai déjà ma clé")
-        # Saisie de la clé unique
-        key = st.text_input("Entrez votre clé unique :", type="password", key="main_key_input")
-        
-        # Le bouton de validation déclenche la vérification
-        if st.button("ACTIVER LE TERMINAL", use_container_width=True):
-            if key:
-                try:
-                    # 1. Connexion à la base (Lien public configuré)
-                    public_url = "https://docs.google.com/spreadsheets/d/1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk/edit?usp=sharing"
-                    cles_actuelles = conn.read(spreadsheet=public_url, worksheet="Sheet1", ttl="0s")
-                    
-                    # 2. Dictionnaire (Respect strict Cle / appareil)
-                    db = dict(zip(cles_actuelles.Cle.astype(str), cles_actuelles.appareil.astype(str)))
+        st.write("### 🔑 Accès Rapide")
+        st.info("Le mode sécurité est actuellement désactivé par l'administrateur. Cliquez sur le bouton à gauche pour entrer.")
+        # On garde le champ pour la forme, mais il n'est plus obligatoire
+        st.text_input("Clé (Optionnelle en mode libre) :", type="password")
 
-                    # 3. Logique de vérification
-                    if key in db:
-                        proprietaire = str(db[key]).strip()
-                        
-                        # Vérification du verrouillage matériel
-                        if proprietaire in ["nan", "None", "", "empty"] or proprietaire == str(st.session_state.get("my_device")):
-                            if enregistrer_activation(key, st.session_state.get("my_device")):
-                                st.session_state["auth"] = True
-                                st.success("✅ SYSTÈME M'SIRI DÉVERROUILLÉ")
-                                st.balloons()
-                                time.sleep(1)
-                                st.rerun()
-                        else:
-                            st.error("🚫 CLÉ DÉJÀ LIÉE À UN AUTRE APPAREIL")
-                    else:
-                        st.error("❌ CLÉ INVALIDE")
-
-                except Exception as e:
-                    st.error(f"⚠️ Erreur de connexion : {e}")
-            else:
-                st.warning("⚠️ Veuillez saisir une clé.")
-
-# --- SORTIE DU MUR DE SÉCURITÉ (ESPACE VIP) ---
+# --- SECTION 3 : ESPACE VIP (TOUJOURS PROTÉGÉ PAR LA SESSION) ---
 else:
-    st.sidebar.success("✅ Authentifié")
-    if st.sidebar.button("Déconnexion"):
+    st.sidebar.success("✅ Session Libre Active")
+    if st.sidebar.button("Fermer la session"):
         st.session_state["auth"] = False
         st.rerun()
 
-    # 1. Barre latérale unique
-    st.sidebar.success("✅ Authentifié")
-    if st.sidebar.button("Déconnexion", key="logout_btn"):
-        st.session_state["auth"] = False
-        st.rerun()
-
-    # 2. En-tête et Metrics
-    st.header("🏆 BIENVENUE DANS L'ESPACE VIP")
-    st.write(f"Ravi de vous revoir, **Maire Général** !")
-    
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Capital Base", "250 $", "+5%") # Ton point de départ
-    col2.metric("Objectif 27 ans", "1M $", "0.025%") # On commence petit, on finit géant
-    col3.metric("Statut", "Actif")
-
-    st.divider()
-
-    # 3. La Zone de Combat (Tabs)
+    # ICI TON CONTENU VIP S'AFFICHE DIRECTEMENT APPRÈS LE CLIC
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "🎓 ACADÉMIE"])
+    
+    with t1:
+        st.subheader("Analyseur Poisson 2100")
+        # Ton code de calcul reste ici...
+
 
     with t1:
         st.subheader("Analyseur Poisson 2100")
