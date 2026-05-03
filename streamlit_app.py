@@ -191,10 +191,7 @@ st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 # --- SECTION 2 : ACCÈS VIP ---
 if not st.session_state.get("auth", False):
     afficher_section_vip(NUMERO_OM, NOM_AGENT)
-# ICI TON CONTENU VIP S'AFFICHE DIRECTEMENT APPRÈS LE CLIC
-    st.header("🏆 ZONE DE COMBAT VIP")
-    t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "🎓 ACADÉMIE"])
-    
+
     with t1:
         st.subheader("Analyseur Poisson 2100")
         # Ton code de calcul reste ici...
