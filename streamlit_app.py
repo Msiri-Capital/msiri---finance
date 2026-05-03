@@ -122,37 +122,76 @@ with col_t2:
     st.error("📉 GOLD : VENTE")
     st.divider()
     st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
-# --- SECTION 2 : ACCÈS LIBRE (SÉCURITÉ DÉSACTIVÉE TEMPORAIREMENT) ---
-if not st.session_state.get("auth", False):
+
+# --- CONFIG / CONSTANTES ---
+MONTANT_VIP = "10$"
+SPREADSHEET_ID = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
+URL_SHEET = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1"
+
+def afficher_badge_paiement(numero_om, nom_agent):
+    st.markdown(
+        f"""
+        <div style="
+            background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 15px;
+        ">
+            <h2 style="color: white; margin-bottom: 10px; font-family: sans-serif;">
+                💳 PAIEMENT ORANGE MONEY
+            </h2>
+            <p style="
+                font-size: 32px;
+                color: white;
+                font-weight: bold;
+                letter-spacing: 2px;
+                margin: 10px 0;
+            ">
+                {numero_om}
+            </p>
+            <p style="color: rgba(255,255,255,0.9); font-style: italic; margin-bottom: 0;">
+                Au nom de : {nom_agent}
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+def afficher_etapes_vip():
+    st.subheader("📝 Marche à suivre")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.info(f"**1. TRANSFERT**\n\nEnvoyez **{MONTANT_VIP}** au numéro ci-dessus via votre menu Orange Money.")
+
+    with col2:
+        st.info("**2. VALIDATION**\n\nCliquez sur le bouton **🚀 VALIDER MON PAIEMENT** ci-dessous.")
+
+    with col3:
+        st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d’écran pour recevoir votre clé VIP instantanée.")
+
+def afficher_section_vip(numero_om, nom_agent):
     st.divider()
-    st.header("🔓 ACCÈS LIBRE AU TERMINAL (MODE TEST)")
-    
-    c1, c2 = st.columns(2)
+    st.header("🔐 Déverrouiller l'accès VIP")
 
-    with c1:
-        st.write("### 💳 Nouveau Membre")
-        if st.button("🚀 DÉCOUVRIR LE SYSTÈME", use_container_width=True):
-            # On simule une petite attente pour faire "pro"
-            with st.spinner("Initialisation de l'accès..."):
-                time.sleep(2)
-                st.session_state["auth"] = True
-                st.success("✅ BIENVENUE DANS M'SIRI !")
-                st.rerun()
+    afficher_badge_paiement(numero_om, nom_agent)
+    afficher_etapes_vip()
 
-    with c2:
-        st.write("### 🔑 Accès Rapide")
-        st.info("Le mode sécurité est actuellement désactivé par l'administrateur. Cliquez sur le bouton à gauche pour entrer.")
-        # On garde le champ pour la forme, mais il n'est plus obligatoire
-        st.text_input("Clé (Optionnelle en mode libre) :", type="password")
+    st.write("")
+    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+        st.success("Paiement signalé avec succès. Veuillez maintenant envoyer votre capture d’écran pour validation.")
 
-# --- SECTION 3 : ESPACE VIP (TOUJOURS PROTÉGÉ PAR LA SESSION) ---
-else:
-    st.sidebar.success("✅ Session Libre Active")
-    if st.sidebar.button("Fermer la session"):
-        st.session_state["auth"] = False
-        st.rerun()
+# --- INTERFACE D'ACCUEIL ---
+st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
-    # ICI TON CONTENU VIP S'AFFICHE DIRECTEMENT APPRÈS LE CLIC
+# --- SECTION 2 : ACCÈS VIP ---
+if not st.session_state.get("auth", False):
+    afficher_section_vip(NUMERO_OM, NOM_AGENT)
+# ICI TON CONTENU VIP S'AFFICHE DIRECTEMENT APPRÈS LE CLIC
     st.header("🏆 ZONE DE COMBAT VIP")
     t1, t2, t3 = st.tabs(["⚽ FOOTBALL", "🏀 BASKETBALL", "🎓 ACADÉMIE"])
     
