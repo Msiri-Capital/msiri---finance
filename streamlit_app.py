@@ -64,11 +64,18 @@ def charger_cles_google():
 # Chargement des clés dans le système
 keys_db = charger_cles_google()
 
-# On stocke keys_db dans le session_state pour que la suite du code le trouve
+# --- CHARGEMENT ET STOCKAGE DES CLÉS ---
+
+# 1. On charge le dictionnaire complet depuis Google Sheets
+keys_db = charger_cles_google()
+
+# 2. On le stocke proprement dans le session_state (RECOLLÉ ET CORRIGÉ)
 if "keys_db" not in st.session_state:
-    st.session_state["keys_db"] = eys_db
-NUMERO_OM = "+243898213650" # Ton numéro Orange Money
-NOM_AGENT="MANGENDA"#<--- Assure-toi que cette lingne est bien ici
+    st.session_state["keys_db"] = keys_db
+
+# --- CONFIGURATION DES AGENTS ---
+NUMERO_OM = "+243898213650"  # Ton numéro Orange Money
+NOM_AGENT = "MANGENDA"       # Le nom de l'agent de validation
 # --- FONCTIONS TECHNIQUES ---
 def calcul_poisson_msiri(eq1, eq2):
     l1, l2 = random.uniform(1.1, 2.9), random.uniform(0.7, 1.9)
