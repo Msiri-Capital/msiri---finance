@@ -197,10 +197,15 @@ st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 # --- SECTION PRINCIPALE (A coller juste après : if st.session_state.get("auth", False):) ---
 
     # 1. INITIALISATION DES ONGLETS (C'est cette ligne qui manquait ou qui était mal placée !)
+    
+# COPIER-COLLER CE BLOC SI LES ONGLETS SONT SOUS LE FILTRE VIP
+if st.session_state.get("auth", False):
+    # Un seul décalage (4 espaces) pour la création des onglets :
     tab1, tab2, tab3 = st.tabs(["⚽ ANALYSE FOOT", "🏀 PRONOSTIQUEUR NBA", "🎓 ACADÉMIE"])
     
-    # 2. ONGLET FOOTBALL (On utilise bien tab1 avec la bonne indentation)
+    # Un seul décalage (4 espaces) pour les "with" :
     with tab1:
+        # Deux décalages (8 espaces) pour ce qui est à l'intérieur :
         st.subheader("🔬 Analyseur Poisson 2100")
         f1 = st.text_input("Domicile", key="f1", value="TP Mazembe")
         f2 = st.text_input("Extérieur", key="f2", value="Saint Éloi Lupopo")
@@ -210,7 +215,6 @@ st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
             st.progress(res['win_a']/100)
             st.write(f"🎯 Score Probable : {res['top'][0][0]}")
    
-    # 3. ONGLET NBA (On utilise tab2)
     with tab2:
         st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
         col_b1, col_b2 = st.columns(2)
@@ -224,7 +228,7 @@ st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
             projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
             st.metric(label=f"Projection de points pour {equipe_a}", value=f"{projection:.1f} pts")
             st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
- 
+
     # 4. ONGLET ACADÉMIE (On utilise tab3)
     with tab3:
         st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
