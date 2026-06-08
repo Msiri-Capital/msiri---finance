@@ -66,7 +66,7 @@ keys_db = charger_cles_google()
 
 # On stocke keys_db dans le session_state pour que la suite du code le trouve
 if "keys_db" not in st.session_state:
-    st.session_state["keys_db"] = k
+    st.session_state["keys_db"] = 
 eys_db
 NUMERO_OM = "+243898213650" # Ton numéro Orange Money
 NOM_AGENT="MANGENDA"#<--- Assure-toi que cette lingne est bien ici
