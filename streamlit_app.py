@@ -192,7 +192,6 @@ def afficher_section_vip(numero_om, nom_agent):
     if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
         st.success("Paiement signalé avec succès. Veuillez maintenant envoyer votre capture d’écran pour validation.")
 
-# --- INTERFACE D'ACCUEIL ---
 st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
 # --- SECTION 2 : ACCÈS VIP ---
