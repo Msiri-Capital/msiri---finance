@@ -194,18 +194,17 @@ def afficher_section_vip(numero_om, nom_agent):
 
 st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
-# --- SECTION PRINCIPALE (A coller juste après : if st.session_state.get("auth", False):) ---
+# --- PROTECTION LOGIQUE : Si l'utilisateur N'EST PAS connecté, on affiche le paiement ---
+if not st.session_state.get("auth", False):
+    afficher_section_vip(NUMERO_OM, NOM_AGENT)
 
-    # 1. INITIALISATION DES ONGLETS (C'est cette ligne qui manquait ou qui était mal placée !)
-    
-# COPIER-COLLER CE BLOC SI LES ONGLETS SONT SOUS LE FILTRE VIP
+# --- SECTION PRINCIPALE : Si l'utilisateur EST connecté, on affiche le Terminal ---
 if st.session_state.get("auth", False):
     # Un seul décalage (4 espaces) pour la création des onglets :
     tab1, tab2, tab3 = st.tabs(["⚽ ANALYSE FOOT", "🏀 PRONOSTIQUEUR NBA", "🎓 ACADÉMIE"])
     
     # Un seul décalage (4 espaces) pour les "with" :
     with tab1:
-        # Deux décalages (8 espaces) pour ce qui est à l'intérieur :
         st.subheader("🔬 Analyseur Poisson 2100")
         f1 = st.text_input("Domicile", key="f1", value="TP Mazembe")
         f2 = st.text_input("Extérieur", key="f2", value="Saint Éloi Lupopo")
@@ -229,7 +228,7 @@ if st.session_state.get("auth", False):
             st.metric(label=f"Projection de points pour {equipe_a}", value=f"{projection:.1f} pts")
             st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
 
-    # 4. ONGLET ACADÉMIE (On utilise tab3)
+    # 4. ONGLET ACADÉMIE
     with tab3:
         st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
         st.write("### 📖 Leçon 1 : La gestion du risque")
@@ -241,21 +240,21 @@ if st.session_state.get("auth", False):
     
         col_cap1, col_cap2 = st.columns(2)
         with col_cap1:
-           capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
-           niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"])
+           capital_total = st.number_input("Votre Capital Total ($`)", min_value=10.0, value=100.0, step=10.0)
+           niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
     
         # Calculs logiques du Commandant
         pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
         mise_conseillee = capital_total * pourcentage
-        objectif_jour = capital_total * 0.15 # 15% de gain par jour est un bel objectif
+        objectif_jour = capital_total * 0.15 
     
         with col_cap2:
-           st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $")
+           st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} `$")
            st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} $")
 
         st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
-
         st.divider()
+
 
         # --- LA DOCTRINE M'SIRI ---
         st.markdown("""
