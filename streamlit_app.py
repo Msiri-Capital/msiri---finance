@@ -189,8 +189,28 @@ def afficher_section_vip(numero_om, nom_agent):
     afficher_etapes_vip()
 
     st.write("")
+    
+    # On utilise le session_state pour mémoriser si le bouton a été cliqué
+    if "paiement_clique" not in st.session_state:
+        st.session_state["paiement_clique"] = False
+
+    # Action du premier bouton
     if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-        st.success("Paiement signalé avec succès. Veuillez maintenant envoyer votre capture d’écran pour validation.")
+        st.session_state["paiement_clique"] = True
+
+    # Si l'utilisateur a validé, on lui montre le succès ET le bouton d'envoi WhatsApp
+    if st.session_state["paiement_clique"]:
+        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
+        
+        # Le fameux bouton de redirection WhatsApp avec l'ID de l'appareil
+        st.markdown(
+            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state.get('my_device', 'Inconnu')})" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3);">
+                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
+                </button>
+            </a>""", 
+            unsafe_allow_html=True
+        )
 
 st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
