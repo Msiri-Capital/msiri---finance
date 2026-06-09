@@ -95,12 +95,84 @@ def page_validation_paiement():
     st.success("✅ ANALYSE TERMINÉE ! Contactez le Commandant pour votre clé.")
     st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
 
-# --- INTERFACE ---
+# ====================================================================================
+# --- CONFIGURATION ET CONSTANTES (À METTRE TOUT EN HAUT) ---
+# ====================================================================================
+MONTANT_VIP = "10$`"
+NUMERO_OM = "+243898213650"  # Ton numéro Orange Money
+NOM_AGENT = "MANGENDA"
+
+# Simulation de fonctions système (Assure-toi que tes vraies fonctions Sheets sont bien déclarées)
+if "auth" not in st.session_state:
+    st.session_state["auth"] = False
+
+if "my_device" not in st.session_state:
+    st.session_state["my_device"] = str(random.getrandbits(32))
+
+def obtenir_citation_du_jour():
+    return "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn"
+
+def enregistrer_activation(cle, device):
+    # Ta logique de connexion Google Sheets vient ici
+    return True
+
+# ====================================================================================
+# --- DÉFINITION DES FONCTIONS VISUELLES VIP (AVANT L'INTERFACE) ---
+# ====================================================================================
+
+def afficher_badge_paiement(numero_om, nom_agent):
+    st.markdown(
+        f"""
+        <div style="background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%); padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.3); border: 1px solid rgba(255,255,255,0.2); margin-bottom: 15px;">
+            <h2 style="color: white; margin-bottom: 10px; font-family: sans-serif; font-size: 24px;">💳 PAIEMENT ORANGE MONEY</h2>
+            <p style="font-size: 32px; color: white; font-weight: bold; letter-spacing: 2px; margin: 10px 0;">{numero_om}</p>
+            <p style="color: rgba(255,255,255,0.9); font-style: italic; margin-bottom: 0; font-size: 16px;">Au nom de : {nom_agent}</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+def afficher_etapes_vip():
+    st.subheader("📝 Marche à suivre")
+    col1, col2, col3 = st.columns(3)
+    col1.info(f"**1. TRANSFERT**\n\nEnvoyez **{MONTANT_VIP}** au numéro ci-dessus via votre menu Orange Money.")
+    col2.info("**2. VALIDATION**\n\nCliquez sur le bouton **🚀 VALIDER MON PAIEMENT** ci-dessous.")
+    col3.info("**3. RÉCEPTION**\n\nEnvoyez la capture d’écran automatique pour obtenir votre clé unique.")
+
+def afficher_section_vip(numero_om, nom_agent):
+    st.divider()
+    st.header("🔐 Déverrouiller l'accès VIP")
+
+    afficher_badge_paiement(numero_om, nom_agent)
+    afficher_etapes_vip()
+
+    st.write("")
+    if "paiement_clique" not in st.session_state:
+        st.session_state["paiement_clique"] = False
+
+    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+        st.session_state["paiement_clique"] = True
+
+    if st.session_state["paiement_clique"]:
+        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
+        st.markdown(
+            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state['my_device']})" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3);">
+                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
+                </button>
+            </a>""", 
+            unsafe_allow_html=True
+        )
+
+# ====================================================================================
+# --- INTERFACE GRAPHIQUE VISUELLE ---
+# ====================================================================================
 
 # BANDEAU DÉFILANT (Gains en temps réel)
 st.markdown("""<marquee style="color: #00ff00; background: #001a00; padding: 5px; font-weight: bold;">
-🟢 Gaston M. +450$ (BTC/USD) | 🟢 Membre #22 +120$ (NBA) | 🟢 Justin K. +85$ (Mazembe vs Lupopo) | 🟢 Signal IA validé : ETH +4.2%
+🟢 Gaston M. +450`$ (BTC/USD) | 🟢 Membre #22 +120$` (NBA) | 🟢 Justin K. +85`$ (Mazembe vs Lupopo) | 🟢 Signal IA validé : ETH +4.2%
 </marquee>""", unsafe_allow_html=True)
+
 # --- AFFICHAGE CITATION DU JOUR ---
 st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}")
 
@@ -124,66 +196,8 @@ with col_t1:
 
 with col_t2:
     st.markdown("### 🚦 Signaux IA")
-    st.success("💰 BTC/USD : ACHAT FORT (92%)")
-    st.warning("⚖️ ETH/USD : NEUTRE")
-    st.error("📉 GOLD : VENTE")
-    st.divider()
-    st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
+    st.success("💰 BTC/USD : ACHAT FOR
 
-st.divider()
-
-# ====================================================================================
-# --- OBJECTIF 1 : CASE D'ACTIVATION & SÉCURITÉ SHEETS ---
-# ====================================================================================
-
-# CAS 1 : L'UTILISATEUR N'EST PAS ENCORE VIP (On affiche la case et le paiement)
-if not st.session_state.get("auth", False):
-    st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
-    st.warning("🔒 L'accès aux outils de pronostics avancés et money management est restreint.")
-    
-    # Alignement chirurgical du champ et du bouton
-    col_input, col_btn = st.columns([3, 1])
-    with col_input:
-        cle_saisie = st.text_input(
-            "Clé d'activation",
-            placeholder="Insérez votre clé VIP M'SIRI ici (MS-XXXX-XXXX)...",
-            label_visibility="collapsed",
-            key="champ_activation_vip"
-        )
-    with col_btn:
-        if st.button("🔓 ACTIVER L'ACCÈS", use_container_width=True, type="primary"):
-            if cle_saisie:
-                # Sécurité Sheets : On nettoie les espaces et on compare avec notre base de données
-                cle_saisie_clean = cle_saisie.strip()
-                keys_db = st.session_state.get("keys_db", {})
-                
-                if cle_saisie_clean in keys_db:
-                    # Vérification du verrouillage d'appareil (Loi de Lubumbashi)
-                    appareil_lie = keys_db[cle_saisie_clean]
-                    current_device = st.session_state.get("my_device")
-                    
-                    if appareil_lie is None or appareil_lie == "None" or appareil_lie == current_device:
-                        # Enregistrement immédiat dans Google Sheets
-                        if enregistrer_activation(cle_saisie_clean, current_device):
-                            st.session_state["auth"] = True
-                            st.success("⚡ Clé validée ! Alignement des satellites réussi.")
-                            time.sleep(1)
-                            st.rerun()
-                    else:
-                        st.error("❌ Cette clé est déjà verrouillée sur un autre appareil mobile.")
-                else:
-                    st.error("❌ Clé invalide ou inexistante. Vérifiez l'orthographe.")
-            else:
-                st.warning("⚠️ Veuillez saisir une clé avant de cliquer.")
-
-    # Affichage automatique des instructions de paiement si pas de clé
-    afficher_section_vip(NUMERO_OM, NOM_AGENT)
-
-# CAS 2 : L'UTILISATEUR EST VIP (La case disparaît, on affiche les onglets sacrés)
-elif st.session_state.get("auth", False):
-    st.success(f"🔓 ACCÈS VIP COLLABORATEUR ACTIF (ID Appareil : {st.session_state['my_device'][:10]})")
-    
-    
 # --- CONFIG / CONSTANTES ---
 MONTANT_VIP = "10$"
 SPREADSHEET_ID = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
