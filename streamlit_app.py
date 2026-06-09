@@ -196,7 +196,7 @@ with col_t1:
 
 with col_t2:
     st.markdown("### 🚦 Signaux IA")
-    st.success("💰 BTC/USD : ACHAT FOR
+    st.success("💰 BTC/USD : ACHAT FOR")
 
 # --- CONFIG / CONSTANTES ---
 MONTANT_VIP = "10$"
