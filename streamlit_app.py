@@ -104,7 +104,7 @@ st.markdown("""<marquee style="color: #00ff00; background: #001a00; padding: 5px
 # --- AFFICHAGE CITATION DU JOUR ---
 st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}")
 
-# TITRE LUXE
+# --- TITRE LUXE ---
 st.title("🏛️ M'SIRI CAPITAL")
 st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
 
@@ -130,6 +130,60 @@ with col_t2:
     st.divider()
     st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
 
+st.divider()
+
+# ====================================================================================
+# --- OBJECTIF 1 : CASE D'ACTIVATION & SÉCURITÉ SHEETS ---
+# ====================================================================================
+
+# CAS 1 : L'UTILISATEUR N'EST PAS ENCORE VIP (On affiche la case et le paiement)
+if not st.session_state.get("auth", False):
+    st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
+    st.warning("🔒 L'accès aux outils de pronostics avancés et money management est restreint.")
+    
+    # Alignement chirurgical du champ et du bouton
+    col_input, col_btn = st.columns([3, 1])
+    with col_input:
+        cle_saisie = st.text_input(
+            "Clé d'activation",
+            placeholder="Insérez votre clé VIP M'SIRI ici (MS-XXXX-XXXX)...",
+            label_visibility="collapsed",
+            key="champ_activation_vip"
+        )
+    with col_btn:
+        if st.button("🔓 ACTIVER L'ACCÈS", use_container_width=True, type="primary"):
+            if cle_saisie:
+                # Sécurité Sheets : On nettoie les espaces et on compare avec notre base de données
+                cle_saisie_clean = cle_saisie.strip()
+                keys_db = st.session_state.get("keys_db", {})
+                
+                if cle_saisie_clean in keys_db:
+                    # Vérification du verrouillage d'appareil (Loi de Lubumbashi)
+                    appareil_lie = keys_db[cle_saisie_clean]
+                    current_device = st.session_state.get("my_device")
+                    
+                    if appareil_lie is None or appareil_lie == "None" or appareil_lie == current_device:
+                        # Enregistrement immédiat dans Google Sheets
+                        if enregistrer_activation(cle_saisie_clean, current_device):
+                            st.session_state["auth"] = True
+                            st.success("⚡ Clé validée ! Alignement des satellites réussi.")
+                            time.sleep(1)
+                            st.rerun()
+                    else:
+                        st.error("❌ Cette clé est déjà verrouillée sur un autre appareil mobile.")
+                else:
+                    st.error("❌ Clé invalide ou inexistante. Vérifiez l'orthographe.")
+            else:
+                st.warning("⚠️ Veuillez saisir une clé avant de cliquer.")
+
+    # Affichage automatique des instructions de paiement si pas de clé
+    afficher_section_vip(NUMERO_OM, NOM_AGENT)
+
+# CAS 2 : L'UTILISATEUR EST VIP (La case disparaît, on affiche les onglets sacrés)
+elif st.session_state.get("auth", False):
+    st.success(f"🔓 ACCÈS VIP COLLABORATEUR ACTIF (ID Appareil : {st.session_state['my_device'][:10]})")
+    
+    
 # --- CONFIG / CONSTANTES ---
 MONTANT_VIP = "10$"
 SPREADSHEET_ID = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
