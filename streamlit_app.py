@@ -60,7 +60,7 @@ def charger_cles_google():
         return dict(zip(df.cle, df.appareil))
     except Exception as e:
         return {"MS-OFFLINE": None}
-
+    
 # --- 1. CONFIGURATION ET CONSTANTES (TOUT EN HAUT) ---
 st.set_page_config(
     page_title="M'SIRI CAPITAL | TERMINAL 2100", 
@@ -82,7 +82,7 @@ if "my_device" not in st.session_state:
     st.session_state["my_device"] = str(random.getrandbits(32))
 
 if "keys_db" not in st.session_state:
-    st.session_state["keys_db"] = {"MS-1234-ABCD": None}  # Simulation locale en attendant ta fonction Google
+    st.session_state["keys_db"] = {"MS-1234-ABCD": None}  # Simulation locale
 
 # --- 3. FONCTIONS TECHNIQUES ET LOGIQUES ---
 def obtenir_citation_du_jour():
@@ -96,7 +96,6 @@ def calcul_poisson_msiri(eq1, eq2):
     return {"win_a": prob_a*100, "top": scores[:3], "over25": (1-p(0,l1+l2)-p(1,l1+l2)-p(2,l1+l2))*100}
 
 def enregistrer_activation(cle, device):
-    # Logique de connexion Google Sheets
     if "keys_db" in st.session_state:
         st.session_state["keys_db"][cle] = device
     return True
@@ -124,7 +123,6 @@ def afficher_etapes_vip():
 def afficher_section_vip(numero_om, nom_agent):
     st.divider()
     st.header("🔐 Déverrouiller l'accès VIP")
-
     afficher_badge_paiement(numero_om, nom_agent)
     afficher_etapes_vip()
 
@@ -162,49 +160,9 @@ st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}"
 st.title("🏛️ M'SIRI CAPITAL")
 st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
 
-# --- SECTION 1 : TRADING (LA VITRINE)
-
-st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
-
-# --- PROTECTION LOGIQUE : Si l'utilisateur N'EST PAS connecté, on affiche le paiement ---
-if not st.session_state.get("auth", False):
-    afficher_section_vip(NUMERO_OM, NOM_AGENT)
-
-# --- SECTION PRINCIPALE : Si l'utilisateur EST connecté, on affiche le Terminal ---
-if st.session_state.get("auth", False):
-    # Un seul décalage (4 espaces) pour la création des onglets :
-    tab1, tab2, tab3 = st.tabs(["⚽ ANALYSE FOOT", "🏀 PRONOSTIQUEUR NBA", "🎓 ACADÉMIE"])
-    
-    # Un seul décalage (4 espaces) pour les "with" :
-    with tab1:
-        st.subheader("🔬 Analyseur Poisson 2100")
-        f1 = st.text_input("Domicile", key="f1", value="TP Mazembe")
-        f2 = st.text_input("Extérieur", key="f2", value="Saint Éloi Lupopo")
-        if st.button("LANCER L'ANALYSE FOOT"):
-            res = calcul_poisson_msiri(f1, f2)
-            st.write(f"### Victoire {f1} : {res['win_a']:.1f}%")
-            st.progress(res['win_a']/100)
-            st.write(f"🎯 Score Probable : {res['top'][0][0]}")
-   
-    with tab2:
-        st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            equipe_a = st.text_input("Équipe Domicile (ex: Lakers)", value="Lakers")
-            moyenne_a = st.number_input("Moyenne de points marqués (Saison)", value=110.0)
-        with col_b2:
-            equipe_b = st.text_input("Équipe Extérieur (ex: Warriors)", value="Warriors")
-            moyenne_b = st.number_input("Moyenne de points encaissés (Adversaire)", value=108.0)
-        if st.button("📊 ANALYSER LE MATCH NBA"):
-            projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
-            st.metric(label=f"Projection de points pour {equipe_a}", value=f"{projection:.1f} pts")
-            st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
-
-    # 4. ONGLET ACADÉMIE
-    with tab3:
-        st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
-        st.write("### 📖 Leçon 1 : La gestion du risque")
-        st.info("Le secret des millionnaires n'est pas de gagner gros, mais de ne jamais perdre son capital de base.")
+# --- SECTION 1 : TRADING (LA VITRINE RESTAURÉE) ---
+st.header("📈 TERMINAL DE TRADING LIVE")
+col_t1, col_t2 = s
 
         # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
         st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
