@@ -61,22 +61,33 @@ def charger_cles_google():
     except Exception as e:
         return {"MS-OFFLINE": None}
 
-# Chargement des clés dans le système
-keys_db = charger_cles_google()
+# --- 1. CONFIGURATION ET CONSTANTES (TOUT EN HAUT) ---
+st.set_page_config(
+    page_title="M'SIRI CAPITAL | TERMINAL 2100", 
+    layout="wide", 
+    initial_sidebar_state="collapsed"
+)
 
-# --- CHARGEMENT ET STOCKAGE DES CLÉS ---
-
-# 1. On charge le dictionnaire complet depuis Google Sheets
-keys_db = charger_cles_google()
-
-# 2. On le stocke proprement dans le session_state (RECOLLÉ ET CORRIGÉ)
-if "keys_db" not in st.session_state:
-    st.session_state["keys_db"] = keys_db
-
-# --- CONFIGURATION DES AGENTS ---
+MONTANT_VIP = "10$`"
 NUMERO_OM = "+243898213650"  # Ton numéro Orange Money
 NOM_AGENT = "MANGENDA"       # Le nom de l'agent de validation
-# --- FONCTIONS TECHNIQUES ---
+SPREADSHEET_ID = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
+URL_SHEET = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1"
+
+# --- 2. INITIALISATION DU SESSION STATE ---
+if "auth" not in st.session_state:
+    st.session_state["auth"] = False
+
+if "my_device" not in st.session_state:
+    st.session_state["my_device"] = str(random.getrandbits(32))
+
+if "keys_db" not in st.session_state:
+    st.session_state["keys_db"] = {"MS-1234-ABCD": None}  # Simulation locale en attendant ta fonction Google
+
+# --- 3. FONCTIONS TECHNIQUES ET LOGIQUES ---
+def obtenir_citation_du_jour():
+    return "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn"
+
 def calcul_poisson_msiri(eq1, eq2):
     l1, l2 = random.uniform(1.1, 2.9), random.uniform(0.7, 1.9)
     def p(k, lamb): return (math.exp(-lamb) * (lamb**k)) / math.factorial(k)
@@ -84,42 +95,13 @@ def calcul_poisson_msiri(eq1, eq2):
     scores = sorted([(f"{i}-{j}", p(i,l1)*p(j,l2)) for i in range(4) for j in range(4)], key=lambda x: x[1], reverse=True)
     return {"win_a": prob_a*100, "top": scores[:3], "over25": (1-p(0,l1+l2)-p(1,l1+l2)-p(2,l1+l2))*100}
 
-def page_validation_paiement():
-    st.balloons()
-    progress = st.progress(0)
-    msg = st.empty()
-    for i in range(100):
-        time.sleep(0.03)
-        progress.progress(i+1)
-        msg.text("🔗 Connexion au réseau Orange Money..." if i<50 else "💎 Génération de votre clé VIP unique...")
-    st.success("✅ ANALYSE TERMINÉE ! Contactez le Commandant pour votre clé.")
-    st.markdown(f"[📲 ENVOYER LA PREUVE SUR WHATSAPP](https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI)")
-
-# ====================================================================================
-# --- CONFIGURATION ET CONSTANTES (À METTRE TOUT EN HAUT) ---
-# ====================================================================================
-MONTANT_VIP = "10$`"
-NUMERO_OM = "+243898213650"  # Ton numéro Orange Money
-NOM_AGENT = "MANGENDA"
-
-# Simulation de fonctions système (Assure-toi que tes vraies fonctions Sheets sont bien déclarées)
-if "auth" not in st.session_state:
-    st.session_state["auth"] = False
-
-if "my_device" not in st.session_state:
-    st.session_state["my_device"] = str(random.getrandbits(32))
-
-def obtenir_citation_du_jour():
-    return "La discipline est le pont entre les objectifs et l'accomplissement. - Jim Rohn"
-
 def enregistrer_activation(cle, device):
-    # Ta logique de connexion Google Sheets vient ici
+    # Logique de connexion Google Sheets
+    if "keys_db" in st.session_state:
+        st.session_state["keys_db"][cle] = device
     return True
 
-# ====================================================================================
-# --- DÉFINITION DES FONCTIONS VISUELLES VIP (AVANT L'INTERFACE) ---
-# ====================================================================================
-
+# --- 4. FONCTIONS VISUELLES VIP ---
 def afficher_badge_paiement(numero_om, nom_agent):
     st.markdown(
         f"""
@@ -165,7 +147,7 @@ def afficher_section_vip(numero_om, nom_agent):
         )
 
 # ====================================================================================
-# --- INTERFACE GRAPHIQUE VISUELLE ---
+# --- 5. INTERFACE GRAPHIQUE VISUELLE ---
 # ====================================================================================
 
 # BANDEAU DÉFILANT (Gains en temps réel)
@@ -180,105 +162,7 @@ st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}"
 st.title("🏛️ M'SIRI CAPITAL")
 st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
 
-# --- SECTION 1 : TRADING (LA VITRINE) ---
-st.header("📈 TERMINAL DE TRADING LIVE")
-col_t1, col_t2 = st.columns([2, 1])
-
-with col_t1:
-    # Graphique Principal
-    st.components.v1.html("""
-        <div style="height:450px;">
-        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-        <script type="text/javascript">
-        new TradingView.widget({"autosize": true, "symbol": "BINANCE:BTCUSDT", "interval": "1", "theme": "dark", "style": "1", "locale": "fr", "container_id": "tv_chart"});
-        </script><div id="tv_chart"></div></div>
-    """, height=450)
-
-with col_t2:
-    st.markdown("### 🚦 Signaux IA")
-    st.success("💰 BTC/USD : ACHAT FOR")
-
-# --- CONFIG / CONSTANTES ---
-MONTANT_VIP = "10$"
-SPREADSHEET_ID = "1Z9qPqqT0vBUEEbmrjHruLf7S2HQVCrbTXwST4jRZPnk"
-URL_SHEET = f"https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1"
-
-def afficher_badge_paiement(numero_om, nom_agent):
-    st.markdown(
-        f"""
-        <div style="
-            background: linear-gradient(135deg, #FF8C00 0%, #FF4500 100%);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0px 10px 20px rgba(255, 69, 0, 0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 15px;
-        ">
-            <h2 style="color: white; margin-bottom: 10px; font-family: sans-serif;">
-                💳 PAIEMENT ORANGE MONEY
-            </h2>
-            <p style="
-                font-size: 32px;
-                color: white;
-                font-weight: bold;
-                letter-spacing: 2px;
-                margin: 10px 0;
-            ">
-                {numero_om}
-            </p>
-            <p style="color: rgba(255,255,255,0.9); font-style: italic; margin-bottom: 0;">
-                Au nom de : {nom_agent}
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-def afficher_etapes_vip():
-    st.subheader("📝 Marche à suivre")
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.info(f"**1. TRANSFERT**\n\nEnvoyez **{MONTANT_VIP}** au numéro ci-dessus via votre menu Orange Money.")
-
-    with col2:
-        st.info("**2. VALIDATION**\n\nCliquez sur le bouton **🚀 VALIDER MON PAIEMENT** ci-dessous.")
-
-    with col3:
-        st.info("**3. RÉCEPTION**\n\nEnvoyez la capture d’écran pour recevoir votre clé VIP instantanée.")
-
-def afficher_section_vip(numero_om, nom_agent):
-    st.divider()
-    st.header("🔐 Déverrouiller l'accès VIP")
-
-    afficher_badge_paiement(numero_om, nom_agent)
-    afficher_etapes_vip()
-
-    st.write("")
-    
-    # On utilise le session_state pour mémoriser si le bouton a été cliqué
-    if "paiement_clique" not in st.session_state:
-        st.session_state["paiement_clique"] = False
-
-    # Action du premier bouton
-    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-        st.session_state["paiement_clique"] = True
-
-    # Si l'utilisateur a validé, on lui montre le succès ET le bouton d'envoi WhatsApp
-    if st.session_state["paiement_clique"]:
-        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
-        
-        # Le fameux bouton de redirection WhatsApp avec l'ID de l'appareil
-        st.markdown(
-            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state.get('my_device', 'Inconnu')})" target="_blank">
-                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3);">
-                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
-                </button>
-            </a>""", 
-            unsafe_allow_html=True
-        )
+# --- SECTION 1 : TRADING (LA VITRINE)
 
 st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
 
