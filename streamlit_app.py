@@ -160,19 +160,20 @@ st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}"
 st.title("🏛️ M'SIRI CAPITAL")
 st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
 
-# --- SECTION 1 : TRADING (LA VITRINE RESTAURÉE) ---
+# --- SECTION 1 : TRADING (LA VITRINE) ---
 st.header("📈 TERMINAL DE TRADING LIVE")
-col_t1, col_t2 = s
+col_t1, col_t2 = st.columns([2, 1])  # <-- Réparé ici !
 
-        # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
-        st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
-        st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
-    
-        col_cap1, col_cap2 = st.columns(2)
-        with col_cap1:
-           capital_total = st.number_input("Votre Capital Total ($`)", min_value=10.0, value=100.0, step=10.0)
-           niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
-    
+# --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
+st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
+st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
+
+col_cap1, col_cap2 = st.columns(2)
+with col_cap1:
+    # Le caractère parasite ` a été supprimé ici :
+    capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
+    niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
+
         # Calculs logiques du Commandant
         pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
         mise_conseillee = capital_total * pourcentage
