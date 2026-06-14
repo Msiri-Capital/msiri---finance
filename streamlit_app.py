@@ -174,51 +174,58 @@ with col_cap1:
     capital_total = st.number_input("Votre Capital Total (`$)", min_value=10.0, value=100.0, step=10.0)
     niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
 
+# --- AJOUTER CETTE CONSTANTE TOUT EN HAUT DE TON FICHIER (AVEC TES AUTRES CONSTANTES) ---
+ADMIN_PASSWORD = "MAIRE_GENERAL_2100"  # <-- Ton code commandant secret
+
+# ====================================================================================
+# --- CALCULS LOGIQUES ET AFFICHAGE SIMULATEUR ---
+# ====================================================================================
+
 # Calculs logiques du Commandant (Parfaitement alignés hors du bloc vertical col1)
 pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
 mise_conseillee = capital_total * pourcentage
 objectif_jour = capital_total * 0.15 
 
 with col_cap2:
-    st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $`")
-    st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} `$")
+    st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $`") # <-- Nettoyé !
+    st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} `$") # <-- Nettoyé !
 
 st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
 st.divider()
 
-        # --- LA DOCTRINE M'SIRI ---
-        st.markdown("""
-        ### 📜 Les 3 Lois d'Airain du Capital
-        1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
-        2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
-        3. **La Discipline du Monde des rois:** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.
-    
-        ---
-        ### 📖 Guide d'Utilisation du Terminal
-        * **Signaux Trading :** Actualisez la page toutes les 15 minutes.
-        * **Analyse Poisson :** Précision de 85% sur les grands championnats.
-        * **Retraits Orange Money :** Sécurisez 50% de vos bénéfices chaque dimanche.
-        """)
-if st.sidebar.button("🔴 DÉCONNEXION"):
-        st.session_state["auth"] = False
-        st.rerun()
-# --- ARCHITECTURE DE LA BARRE LATÉRALE ---
+# --- LA DOCTRINE M'SIRI ---
+st.markdown("""
+### 📜 Les 3 Lois d'Airain du Capital
+1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
+2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
+3. **La Discipline du Monde des rois :** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.
+
+---
+### 📖 Guide d'Utilisation du Terminal
+* **Signaux Trading :** Actualisez la page toutes les 15 minutes.
+* **Analyse Poisson :** Précision de 85% sur les grands championnats.
+* **Retraits Orange Money :** Sécurisez 50% de vos bénéfices chaque dimanche.
+""")
+
+# ====================================================================================
+# --- ARCHITECTURE DE LA BARRE LATÉRALE (Sidebar unique et ordonnée) ---
+# ====================================================================================
 with st.sidebar:
-    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=100) # Un logo pro par défaut
+    st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=100) # Logo Pro
     st.title("🏛️ NAVIGATION")
     st.write(f"🆔 **ID Appareil :** `{st.session_state['my_device'][:10]}`")
     
     st.divider()
 
-    # 1. BOUTON DE DÉCONNEXION (Visible seulement si connecté)
-    if st.session_state["auth"]:
+    # 1. BOUTON DE DÉCONNEXION UNIQUE (Visible seulement si connecté)
+    if st.session_state.get("auth", False):
         if st.button("🔴 SE DÉCONNECTER", use_container_width=True):
             st.session_state["auth"] = False
             st.rerun()
     
     st.divider()
 
-    # 2. SECTION ADMINISTRATION (CACHÉE)
+    # 2. SECTION ADMINISTRATION SECRÈTE
     with st.expander("🛠️ ADMINISTRATION M'SIRI"):
         pwd = st.text_input("Code Commandant", type="password")
         if pwd == ADMIN_PASSWORD:
@@ -227,7 +234,7 @@ with st.sidebar:
             # Gestion des clés
             st.write("### 📊 État des Clés")
             # On crée une copie pour éviter les erreurs de modification pendant la lecture
-            for k, v in list(st.session_state["keys_db"].items()):
+            for k, v in list(st.session_state.get("keys_db", {}).items()):
                 c_k, c_v, c_b = st.columns([2, 2, 1])
                 c_k.caption(k)
                 if v:
@@ -243,9 +250,12 @@ with st.sidebar:
             nk = st.text_input("Nouvelle Clé")
             if st.button("➕ CRÉER"):
                 if nk:
+                    if "keys_db" not in st.session_state:
+                        st.session_state["keys_db"] = {}
                     st.session_state["keys_db"][nk] = None
                     st.rerun()
         elif pwd != "":
             st.error("🔒 Accès refusé")
+
 st.divider()
 st.caption("© 2026 M'SIRI CAPITAL - Technologie de Lubumbashi.")
