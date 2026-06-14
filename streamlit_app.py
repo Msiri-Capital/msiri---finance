@@ -169,23 +169,22 @@ st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
 st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
 
 col_cap1, col_cap2 = st.columns(2)
+
 with col_cap1:
-    # Le caractère parasite ` a été supprimé ici :
-    capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
+    capital_total = st.number_input("Votre Capital Total (`$)", min_value=10.0, value=100.0, step=10.0)
     niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
 
-   # Calculs logiques du Commandant
-        pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
-        mise_conseillee = capital_total * pourcentage
-        objectif_jour = capital_total * 0.15 
-    
-        with col_cap2:
-           st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} `$")
-           st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} $")
+# Calculs logiques du Commandant (Parfaitement alignés hors du bloc vertical col1)
+pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
+mise_conseillee = capital_total * pourcentage
+objectif_jour = capital_total * 0.15 
 
-        st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
-        st.divider()
+with col_cap2:
+    st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $`")
+    st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} `$")
 
+st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
+st.divider()
 
         # --- LA DOCTRINE M'SIRI ---
         st.markdown("""
