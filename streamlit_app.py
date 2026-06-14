@@ -174,7 +174,7 @@ with col_cap1:
     capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
     niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
 
-        # Calculs logiques du Commandant
+   # Calculs logiques du Commandant
         pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
         mise_conseillee = capital_total * pourcentage
         objectif_jour = capital_total * 0.15 
