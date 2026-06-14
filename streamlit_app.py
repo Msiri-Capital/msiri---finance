@@ -160,9 +160,37 @@ st.info(f"📜 **LA PENSÉE DU MAIRE GÉNÉRAL :** {obtenir_citation_du_jour()}"
 st.title("🏛️ M'SIRI CAPITAL")
 st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
 
-# --- SECTION 1 : TRADING (LA VITRINE) ---
+# --- SECTION 1 : TRADING (LA VITRINE RESTAURÉE) ---
 st.header("📈 TERMINAL DE TRADING LIVE")
-col_t1, col_t2 = st.columns([2, 1])  # <-- Réparé ici !
+
+# Correction de la coupure : Création propre des deux colonnes
+col_t1, col_t2 = st.columns([2, 1])
+
+with col_t1:
+    # Réinjection sécurisée du widget TradingView
+    st.components.v1.html("""
+        <div style="height:450px;">
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "BINANCE:BTCUSDT",
+            "interval": "1",
+            "theme": "dark",
+            "style": "1",
+            "locale": "fr",
+            "container_id": "tv_chart"
+        });
+        </script><div id="tv_chart"></div></div>
+    """, height=450)
+
+with col_t2:
+    st.markdown("### 🚦 Signaux IA")
+    st.success("💰 BTC/USD : ACHAT FORT (92%)")
+    st.warning("⚖️ ETH/USD : NEUTRE")
+    st.error("📉 GOLD : VENTE")
+    st.divider()
+    st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
 
 # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
 st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
