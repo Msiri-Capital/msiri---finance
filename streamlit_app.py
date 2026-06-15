@@ -305,41 +305,6 @@ def calcul_poisson_msiri(domicile, exterieur):
     buts_dom = np.arange(0, max_buts + 1)
     buts_ext = np.arange(0, max_buts + 1)
     
-    # Calcul vectorisé des probabilités Poisson
-    probs_dom = poisson.pmf(buts_dom[:1.0, None], lambda_dom)
-    probs_ext = poisson.pmf(buts_ext[None, 1.0:], lambda_ext)
-    probs_total = probs_dom * probs_ext
-    
-    # Classification des résultats
-    prob_victoire = np.sum(probs_total[np.triu_indices_from(probs_total, 1)])
-    prob_nul = np.sum(np.diag(probs_total))
-    prob_defaite = np.sum(probs_total[np.tril_indices_from(probs_total, -1)])
-    
-    # Top 5 des scores les plus probables
-    indices_tri = np.argsort(probs_total.flatten())[-5:][::-1]
-    top_scores = []
-    for idx in indices_tri:
-        i = idx // (max_buts + 1)
-        j = idx % (max_buts + 1)
-        top_scores.append((int(i), int(j)))
-    
-    return {
-        'win_a': round(float(prob_victoire * 100), 1),
-        'nul': round(float(prob_nul * 100), 1),
-        'defaite': round(float(prob_defaite * 100), 1),
-        'top': top_scores,
-        'lambda_dom': round(lambda_dom, 2),
-        'lambda_ext': round(lambda_ext, 2)
-    }# Test de la fonction
-resultat = calcul_poisson_msiri("TP Mazembe", "Saint Éloi Lupopo")
-print(f"Victoire: {resultat['win_a']}%")
-print(f"Nul: {resultat['nul']}%")
-print(f"Défaite: {resultat['defaite']}%")
-print(f"Score probable: {resultat['top'][0][0]} - {resultat['top'][0][1]}")
-print(f"Top 5: {resultat['top']}")# Version avec cache pour accélérer les calculs répétés
-from functools import lru_cache
-
-@lru_cache(maxsize=128)
 def calcul_poisson_msiri_cached(domicile, exterieur):
     """Version avec cache pour les mêmes paires d'équipes"""
     return calcul_poisson_msiri(domicile, exterieur)
