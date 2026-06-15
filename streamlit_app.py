@@ -1,6 +1,6 @@
+import streamlit as st
 import numpy as np
 from scipy.stats import poisson
-import streamlit as st
 import random
 import math
 import time
