@@ -195,6 +195,80 @@ with col_t2:
     st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
 
 # ====================================================================================
+# --- 6. LOGIQUE DE SÉCURITÉ & EFFETS SPÉCIAUX M'SIRI ---
+# ====================================================================================
+
+# CAS A : L'UTILISATEUR N'EST PAS ENCORE CONNECTÉ (On affiche la case ET le paiement)
+if not st.session_state.get("auth", False):
+    st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
+    st.warning("🔒 Saisissez votre clé ci-dessous pour déverrouiller les outils VIP.")
+    
+    # 🔑 LA CASE DE CLÉ (Reste visible tant que l'accès n'est pas validé)
+    col_input, col_btn = st.columns([3, 1])
+    with col_input:
+        cle_saisie = st.text_input(
+            "Clé d'activation",
+            placeholder="Insérez votre clé VIP M'SIRI ici (MS-XXXX-XXXX)...",
+            label_visibility="collapsed",
+            key="champ_activation_vip"
+        )
+    with col_btn:
+        if st.button("🔓 ACTIVER L'ACCÈS", use_container_width=True, type="primary"):
+            if cle_saisie:
+                cle_saisie_clean = cle_saisie.strip()
+                keys_db = st.session_state.get("keys_db", {})
+                
+                if cle_saisie_clean in keys_db:
+                    appareil_lie = keys_db[cle_saisie_clean]
+                    current_device = st.session_state.get("my_device")
+                    
+                    if appareil_lie is None or appareil_lie == "None" or appareil_lie == current_device:
+                        if enregistrer_activation(cle_saisie_clean, current_device):
+                            st.session_state["auth"] = True
+                            st.success("⚡ Clé validée ! Alignement des satellites réussi.")
+                            time.sleep(1)
+                            st.rerun()
+                    else:
+                        st.error("❌ Cette clé est déjà verrouillée sur un autre appareil mobile.")
+                else:
+                    st.error("❌ Clé invalide ou inexistante. Vérifiez l'orthographe.")
+            else:
+                st.warning("⚠️ Veuillez saisir une clé avant de cliquer.")
+
+    # 💳 LA SECTION PAIEMENT ORANGE MONEY (Affichée juste en dessous de la case)
+    st.divider()
+    st.header("🔐 Déverrouiller l'accès VIP")
+    
+    # Appel des badges visuels
+    afficher_badge_paiement(NUMERO_OM, NOM_AGENT)
+    afficher_etapes_vip()
+    st.write("")
+
+    # Gestion de la mémoire du clic de paiement
+    if "paiement_clique" not in st.session_state:
+        st.session_state["paiement_clique"] = False
+
+    # BOUTON VALIDER LE PAIEMENT AVEC EFFETS SPÉCIAUX !
+    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+        st.session_state["paiement_clique"] = True
+        # Déclenchement des festivités M'SIRI ! 🎉
+        st.balloons()
+        st.snow() 
+
+    # 📲 APPARITION DU BOUTON WHATSAPP APPRÈS LE CLIC
+    if st.session_state["paiement_clique"]:
+        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
+        st.markdown(
+            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state['my_device']})" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3); width: 100%;">
+                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
+                </button>
+            </a>""", 
+            unsafe_allow_html=True
+        )
+
+# CAS B : L'UTILISATEUR EST CONNECTÉ (Tout s'efface pour laisser place aux algorithmes)
+# ====================================================================================
 # --- MOTEUR MATHÉMATIQUE DE POISSON VECTORISÉ (VERSION D'ÉLITE) ---
 # ====================================================================================
 
