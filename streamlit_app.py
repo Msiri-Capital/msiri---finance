@@ -192,6 +192,112 @@ with col_t2:
     st.divider()
     st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
 
+# ====================================================================================
+# --- 6. LOGIQUE DE SÉCURITÉ & EFFETS SPÉCIAUX M'SIRI ---
+# ====================================================================================
+
+# CAS A : L'UTILISATEUR N'EST PAS ENCORE CONNECTÉ (On affiche la case ET le paiement)
+if not st.session_state.get("auth", False):
+    st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
+    st.warning("🔒 Saisissez votre clé ci-dessous pour déverrouiller les outils VIP.")
+    
+    # 🔑 LA CASE DE CLÉ (Reste visible tant que l'accès n'est pas validé)
+    col_input, col_btn = st.columns([3, 1])
+    with col_input:
+        cle_saisie = st.text_input(
+            "Clé d'activation",
+            placeholder="Insérez votre clé VIP M'SIRI ici (MS-XXXX-XXXX)...",
+            label_visibility="collapsed",
+            key="champ_activation_vip"
+        )
+    with col_btn:
+        if st.button("🔓 ACTIVER L'ACCÈS", use_container_width=True, type="primary"):
+            if cle_saisie:
+                cle_saisie_clean = cle_saisie.strip()
+                keys_db = st.session_state.get("keys_db", {})
+                
+                if cle_saisie_clean in keys_db:
+                    appareil_lie = keys_db[cle_saisie_clean]
+                    current_device = st.session_state.get("my_device")
+                    
+                    if appareil_lie is None or appareil_lie == "None" or appareil_lie == current_device:
+                        if enregistrer_activation(cle_saisie_clean, current_device):
+                            st.session_state["auth"] = True
+                            st.success("⚡ Clé validée ! Alignement des satellites réussi.")
+                            time.sleep(1)
+                            st.rerun()
+                    else:
+                        st.error("❌ Cette clé est déjà verrouillée sur un autre appareil mobile.")
+                else:
+                    st.error("❌ Clé invalide ou inexistante. Vérifiez l'orthographe.")
+            else:
+                st.warning("⚠️ Veuillez saisir une clé avant de cliquer.")
+
+    # 💳 LA SECTION PAIEMENT ORANGE MONEY (Affichée juste en dessous de la case)
+    st.divider()
+    st.header("🔐 Déverrouiller l'accès VIP")
+    
+    # Appel des badges visuels
+    afficher_badge_paiement(NUMERO_OM, NOM_AGENT)
+    afficher_etapes_vip()
+    st.write("")
+
+    # Gestion de la mémoire du clic de paiement
+    if "paiement_clique" not in st.session_state:
+        st.session_state["paiement_clique"] = False
+
+    # BOUTON VALIDER LE PAIEMENT AVEC EFFETS SPÉCIAUX !
+    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+        st.session_state["paiement_clique"] = True
+        # Déclenchement des festivités M'SIRI ! 🎉
+        st.balloons()
+        st.snow() 
+
+    # 📲 APPARITION DU BOUTON WHATSAPP APPRÈS LE CLIC
+    if st.session_state["paiement_clique"]:
+        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
+        st.markdown(
+            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state['my_device']})" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3); width: 100%;">
+                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
+                </button>
+            </a>""", 
+            unsafe_allow_html=True
+        )
+
+# CAS B : L'UTILISATEUR EST CONNECTÉ (Tout s'efface pour laisser place aux algorithmes)
+else:
+    st.success(f"🔓 ACCÈS VIP COLLABORATEUR ACTIF (ID Appareil : {st.session_state['my_device'][:10]})")
+    
+    tab1, tab2, tab3 = st.tabs(["⚽ ANALYSE FOOT", "🏀 PRONOSTIQUEUR NBA", "🎓 ACADÉMIE"])
+    
+    with tab1:
+        st.subheader("🔬 Analyseur Poisson 2100")
+        f1 = st.text_input("Domicile", key="f1", value="TP Mazembe")
+        f2 = st.text_input("Extérieur", key="f2", value="Saint Éloi Lupopo")
+        if st.button("LANCER L'ANALYSE FOOT"):
+            res = calcul_poisson_msiri(f1, f2)
+            st.write(f"### Victoire {f1} : {res['win_a']:.1f}%")
+            st.progress(res['win_a']/100)
+            st.write(f"🎯 Score Probable : {res['top'][0][0]}")
+   
+    with tab2:
+        st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            equipe_a = st.text_input("Équipe Domicile (ex: Lakers)", value="Lakers")
+            moyenne_a = st.number_input("Moyenne de points marqués (Saison)", value=110.0)
+        with col_b2:
+            equipe_b = st.text_input("Équipe Extérieur (ex: Warriors)", value="Warriors")
+            moyenne_b = st.number_input("Moyenne de points encaissés (Adversaire)", value=108.0)
+        if st.button("📊 ANALYSER LE MATCH NBA"):
+            projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
+            st.metric(label="Mise Maximum / Signal", value=f"{projection:.1f} pts")
+            st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
+
+    with tab3:
+        st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
+        
 # --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
 st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
 st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
