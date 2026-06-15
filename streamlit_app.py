@@ -265,34 +265,113 @@ if not st.session_state.get("auth", False):
 
 
 # CAS B : L'UTILISATEUR EST CONNECTÉ (Zone VIP Sécurisée)
-else:
-    st.success(f"🔓 ACCÈS VIP COLLABORATEUR ACTIF (ID Appareil : {st.session_state['my_device'][:10]})")
+def calcul_poisson_msiri(domicile, exterieur):
+    """
+    Modèle de Poisson prédictif pour le football (version NumPy vectorisée)
     
-    tab1, tab2, tab3 = st.tabs(["⚽ ANALYSE FOOT", "🏀 PRONOSTIQUEUR NBA", "🎓 ACADÉMIE"])
+    Args:
+        domicile (str): Nom de l'équipe à domicile
+        exterieur (str): Nom de l'équipe à l'extérieur
     
-    with tab1:
-        st.subheader("🔬 Analyseur Poisson 2100")
-        f1 = st.text_input("Domicile", key="f1", value="TP Mazembe")
-        f2 = st.text_input("Extérieur", key="f2", value="Saint Éloi Lupopo")
-        if st.button("LANCER L'ANALYSE FOOT"):
-            res = calcul_poisson_msiri(f1, f2)
-            st.write(f"### Victoire {f1} : {res['win_a']:.1f}%")
-            st.progress(res['win_a']/100)
-            st.write(f"🎯 Score Probable : {res['top'][0][0]}")
-   
-    with tab2:
-        st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            equipe_a = st.text_input("Équipe Domicile (ex: Lakers)", value="Lakers")
-            moyenne_a = st.number_input("Moyenne de points marqués (Saison)", value=110.0)
-        with col_b2:
-            equipe_b = st.text_input("Équipe Extérieur (ex: Warriors)", value="Warriors")
-            moyenne_b = st.number_input("Moyenne de points encaissés (Adversaire)", value=108.0)
-        if st.button("📊 ANALYSER LE MATCH NBA"):
-            projection = (moyenne_a + moyenne_b) / 2 + random.uniform(-5, 5)
-            st.metric(label="Mise Maximum / Signal", value=f"{projection:.1f} pts")
-            st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
+    Returns:
+        dict: win_a, nul, defaite, top (scores probables)
+    """
+    # Base de données des forces d'équipes (à enrichir)
+    forces = {
+        "TP Mazembe": 1.4,
+        "Saint Éloi Lupopo": 1.1,
+        "Vita Club": 1.2,
+        "AS VClub": 1.15,
+        "DCMP": 0.9,
+        "Maniema Union": 1.05,
+        "Raja Casablanca": 1.3,
+        "Wydad": 1.28,
+        "ES Tunis": 1.25,
+        "Al Ahly": 1.35,
+    }
+    
+    # Force par défaut si équipe non répertoriée
+    force_dom = forces.get(domicile, 1.0)
+    force_ext = forces.get(exterieur, 1.0)
+    
+    # Buts attendus (lambda)
+    lambda_dom = force_dom * 1.8  # Moyenne générale domicile
+    lambda_ext = force_ext * 1.2  # Moyenne générale extérieur
+    
+    max_buts = 10
+    
+    # Création des matrices de buts (vectorisation)
+    buts_dom = np.arange(0, max_buts + 1)
+    buts_ext = np.arange(0, max_buts + 1)
+    
+    # Calcul vectorisé des probabilités Poisson
+    probs_dom = poisson.pmf(buts_dom[:, None], lambda_dom)
+    probs_ext = poisson.pmf(buts_ext[None, :], lambda_ext)
+    probs_total = probs_dom * probs_ext
+    
+    # Classification des résultats
+    prob_victoire = np.sum(probs_total[np.triu_indices_from(probs_total, 1)])
+    prob_nul = np.sum(np.diag(probs_total))
+    prob_defaite = np.sum(probs_total[np.tril_indices_from(probs_total, -1)])
+    
+    # Top 5 des scores les plus probables
+    indices_tri = np.argsort(probs_total.flatten())[-5:][::-1]
+    top_scores = []
+    for idx in indices_tri:
+        i = idx // (max_buts + 1)
+        j = idx % (max_buts + 1)
+        top_scores.append((int(i), int(j)))
+    
+    return {
+        'win_a': round(float(prob_victoire * 100), 1),
+        'nul': round(float(prob_nul * 100), 1),
+        'defaite': round(float(prob_defaite * 100), 1),
+        'top': top_scores,
+        'lambda_dom': round(lambda_dom, 2),
+        'lambda_ext': round(lambda_ext, 2)
+    }# Test de la fonction
+resultat = calcul_poisson_msiri("TP Mazembe", "Saint Éloi Lupopo")
+print(f"Victoire: {resultat['win_a']}%")
+print(f"Nul: {resultat['nul']}%")
+print(f"Défaite: {resultat['defaite']}%")
+print(f"Score probable: {resultat['top'][0][0]} - {resultat['top'][0][1]}")
+print(f"Top 5: {resultat['top']}")# Version avec cache pour accélérer les calculs répétés
+from functools import lru_cache
+
+@lru_cache(maxsize=128)
+def calcul_poisson_msiri_cached(domicile, exterieur):
+    """Version avec cache pour les mêmes paires d'équipes"""
+    return calcul_poisson_msiri(domicile, exterieur)
+
+# Dans Streamlit, utiliser st.cache_data
+@st.cache_data(ttl=3600)  # Cache d'une heure
+def calcul_poisson_msiri_streamlit(domicile, exterieur):
+    return calcul_poisson_msiri(domicile, exterieur)def visualiser_matrice_poisson(domicile, exterieur):
+    """Affiche la matrice des probabilités de scores"""
+    res = calcul_poisson_msiri(domicile, exterieur)
+    
+    st.subheader(f"📊 Matrice des probabilités : {domicile} vs {exterieur}")
+    
+    # Création de la matrice pour l'affichage
+    max_buts = 6  # Afficher jusqu'à 6 buts pour lisibilité
+    lambda_dom = res['lambda_dom']
+    lambda_ext = res['lambda_ext']
+    
+    buts_dom = np.arange(0, max_buts + 1)
+    buts_ext = np.arange(0, max_buts + 1)
+    probs_dom = poisson.pmf(buts_dom[:, None], lambda_dom)
+    probs_ext = poisson.pmf(buts_ext[None, :], lambda_ext)
+    matrice = (probs_dom * probs_ext) * 100
+    
+    # Affichage avec Streamlit
+    st.dataframe(
+        matrice,
+        column_config={
+            "index": "Domicile →",
+            **{str(j): f"{j} buts" for j in range(max_buts + 1)}
+        },
+        use_container_width=True
+    )
 
     # L'onglet Académie accueille désormais le Simulateur de Gestion de manière étanche
     with tab3:
