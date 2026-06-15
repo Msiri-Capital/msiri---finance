@@ -196,12 +196,42 @@ with col_t2:
 # --- 6. LOGIQUE DE SÉCURITÉ & EFFETS SPÉCIAUX M'SIRI ---
 # ====================================================================================
 
-# CAS A : L'UTILISATEUR N'EST PAS ENCORE CONNECTÉ (On affiche la case ET le paiement)
+# CAS A : L'UTILISATEUR N'EST PAS ENCORE CONNECTÉ
 if not st.session_state.get("auth", False):
     st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
-    st.warning("🔒 Saisissez votre clé ci-dessous pour déverrouiller les outils VIP.")
     
-    # 🔑 LA CASE DE CLÉ (Reste visible tant que l'accès n'est pas validé)
+    # 1. EN PREMIER : Instructions et Badge de Paiement Orange Money
+    st.header("🔐 Déverrouiller l'accès VIP")
+    afficher_badge_paiement(NUMERO_OM, NOM_AGENT)
+    afficher_etapes_vip()
+    st.write("")
+
+    # Gestion de la mémoire du clic de paiement
+    if "paiement_clique" not in st.session_state:
+        st.session_state["paiement_clique"] = False
+
+    # BOUTON VALIDER LE PAIEMENT AVEC EFFETS SPÉCIAUX !
+    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
+        st.session_state["paiement_clique"] = True
+        st.balloons()
+        st.snow() 
+
+    # APPARITION DU BOUTON WHATSAPP APPRÈS LE CLIC
+    if st.session_state["paiement_clique"]:
+        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
+        st.markdown(
+            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state['my_device']})" target="_blank">
+                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3); width: 100%;">
+                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
+                </button>
+            </a>""", 
+            unsafe_allow_html=True
+        )
+    
+    st.divider()
+    
+    # 2. EN DERNIER POSITION : La case de clé d'activation pour basculer VIP
+    st.warning("🔑 Une fois votre clé reçue par le Commandant, insérez-la ici pour activer le Terminal :")
     col_input, col_btn = st.columns([3, 1])
     with col_input:
         cle_saisie = st.text_input(
@@ -233,39 +263,8 @@ if not st.session_state.get("auth", False):
             else:
                 st.warning("⚠️ Veuillez saisir une clé avant de cliquer.")
 
-    # 💳 LA SECTION PAIEMENT ORANGE MONEY (Affichée juste en dessous de la case)
-    st.divider()
-    st.header("🔐 Déverrouiller l'accès VIP")
-    
-    # Appel des badges visuels
-    afficher_badge_paiement(NUMERO_OM, NOM_AGENT)
-    afficher_etapes_vip()
-    st.write("")
 
-    # Gestion de la mémoire du clic de paiement
-    if "paiement_clique" not in st.session_state:
-        st.session_state["paiement_clique"] = False
-
-    # BOUTON VALIDER LE PAIEMENT AVEC EFFETS SPÉCIAUX !
-    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-        st.session_state["paiement_clique"] = True
-        # Déclenchement des festivités M'SIRI ! 🎉
-        st.balloons()
-        st.snow() 
-
-    # 📲 APPARITION DU BOUTON WHATSAPP APPRÈS LE CLIC
-    if st.session_state["paiement_clique"]:
-        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
-        st.markdown(
-            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state['my_device']})" target="_blank">
-                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3); width: 100%;">
-                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
-                </button>
-            </a>""", 
-            unsafe_allow_html=True
-        )
-
-# CAS B : L'UTILISATEUR EST CONNECTÉ (Tout s'efface pour laisser place aux algorithmes)
+# CAS B : L'UTILISATEUR EST CONNECTÉ (Zone VIP Sécurisée)
 else:
     st.success(f"🔓 ACCÈS VIP COLLABORATEUR ACTIF (ID Appareil : {st.session_state['my_device'][:10]})")
     
@@ -295,45 +294,38 @@ else:
             st.metric(label="Mise Maximum / Signal", value=f"{projection:.1f} pts")
             st.success(f"🎯 Conseil M'SIRI : Favoriser le 'Over {projection - 10:.0f}.5' pour ce match.")
 
+    # L'onglet Académie accueille désormais le Simulateur de Gestion de manière étanche
     with tab3:
         st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
         
-# --- SIMULATEUR DE GESTION (LE COEUR DU SYSTÈME) ---
-st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
-st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
+        # --- SIMULATEUR DE GESTION (EMBARQUÉ CHEZ LES VIP) ---
+        st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
+        st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
 
-col_cap1, col_cap2 = st.columns(2)
+        col_cap1, col_cap2 = st.columns(2)
 
-with col_cap1:
-    capital_total = st.number_input("Votre Capital Total (`$)", min_value=10.0, value=100.0, step=10.0)
-    niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
+        with col_cap1:
+            capital_total = st.number_input("Votre Capital Total ($)", min_value=10.0, value=100.0, step=10.0)
+            niveau_risque = st.select_slider("Niveau de Risque M'SIRI", options=["Prudent", "Équilibré", "Guerrier"], value="Équilibré")
 
-# --- AJOUTER CETTE CONSTANTE TOUT EN HAUT DE TON FICHIER (AVEC TES AUTRES CONSTANTES) ---
-ADMIN_PASSWORD = "MAIRE_GENERAL_2100"  # <-- Ton code commandant secret
+        # Calculs logiques du Commandant
+        pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
+        mise_conseillee = capital_total * pourcentage
+        objectif_jour = capital_total * 0.15 
 
-# ====================================================================================
-# --- CALCULS LOGIQUES ET AFFICHAGE SIMULATEUR ---
-# ====================================================================================
+        with col_cap2:
+            st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $")
+            st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} $")
 
-# Calculs logiques du Commandant (Parfaitement alignés hors du bloc vertical col1)
-pourcentage = 0.02 if niveau_risque == "Prudent" else 0.05 if niveau_risque == "Équilibré" else 0.10
-mise_conseillee = capital_total * pourcentage
-objectif_jour = capital_total * 0.15 
+        st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
+        st.divider()
 
-with col_cap2:
-    st.metric(label="Mise Maximum / Signal", value=f"{mise_conseillee:.2f} $`") # <-- Nettoyé !
-    st.metric(label="Objectif Gain Journalier", value=f"+{objectif_jour:.2f} `$") # <-- Nettoyé !
-
-st.warning(f"🛡️ **STRATÉGIE {niveau_risque.upper()} :** Ne lancez jamais plus de 3 signaux par jour avec cette mise.")
-st.divider()
-
-# --- LA DOCTRINE M'SIRI ---
-st.markdown("""
-### 📜 Les 3 Lois d'Airain du Capital
-1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
-2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
-3. **La Discipline du Monde des rois :** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.
-
+        # --- LA DOCTRINE M'SIRI ---
+        st.markdown("""
+        ### 📜 Les 3 Lois d'Airain du Capital
+        1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
+        2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
+        3. **La Discipline du Monde des rois :** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.    
 ---
 ### 📖 Guide d'Utilisation du Terminal
 * **Signaux Trading :** Actualisez la page toutes les 15 minutes.
