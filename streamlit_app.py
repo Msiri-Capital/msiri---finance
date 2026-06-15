@@ -306,8 +306,8 @@ def calcul_poisson_msiri(domicile, exterieur):
     buts_ext = np.arange(0, max_buts + 1)
     
     # Calcul vectorisé des probabilités Poisson
-    probs_dom = poisson.pmf(buts_dom[:, None], lambda_dom)
-    probs_ext = poisson.pmf(buts_ext[None, :], lambda_ext)
+    probs_dom = poisson.pmf(buts_dom[:1.0, None], lambda_dom)
+    probs_ext = poisson.pmf(buts_ext[None, 1.0:], lambda_ext)
     probs_total = probs_dom * probs_ext
     
     # Classification des résultats
