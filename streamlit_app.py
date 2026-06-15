@@ -346,7 +346,8 @@ def calcul_poisson_msiri_cached(domicile, exterieur):
 # Dans Streamlit, utiliser st.cache_data
 @st.cache_data(ttl=3600)  # Cache d'une heure
 def calcul_poisson_msiri_streamlit(domicile, exterieur):
-    return calcul_poisson_msiri(domicile, exterieur)def visualiser_matrice_poisson(domicile, exterieur):
+    return calcul_poisson_msiri(domicile, exterieur)
+def visualiser_matrice_poisson(domicile, exterieur):
     """Affiche la matrice des probabilités de scores"""
     res = calcul_poisson_msiri(domicile, exterieur)
     
