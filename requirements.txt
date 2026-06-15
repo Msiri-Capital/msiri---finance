@@ -1,1 +1,5 @@
 st-gsheets-connection
+text
+numpy
+scipy
+st-gsheets-connection
