@@ -1,8 +1,9 @@
+import numpy as np
+from scipy.stats import poisson
 import streamlit as st
 import random
 import math
 import time
-import numpy as np
 from streamlit_gsheets import GSheetsConnection
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
@@ -194,90 +195,13 @@ with col_t2:
     st.info("💡 Le Trading nécessite une précision de 22ème siècle. Nos algorithmes scannent le marché 24h/24.")
 
 # ====================================================================================
-# --- 6. LOGIQUE DE SÉCURITÉ & EFFETS SPÉCIAUX M'SIRI ---
+# --- MOTEUR MATHÉMATIQUE DE POISSON VECTORISÉ (VERSION D'ÉLITE) ---
 # ====================================================================================
 
-# CAS A : L'UTILISATEUR N'EST PAS ENCORE CONNECTÉ
-if not st.session_state.get("auth", False):
-    st.write("## 🛡️ SYSTÈME DE SÉCURITÉ M'SIRI")
-    
-    # 1. EN PREMIER : Instructions et Badge de Paiement Orange Money
-    st.header("🔐 Déverrouiller l'accès VIP")
-    afficher_badge_paiement(NUMERO_OM, NOM_AGENT)
-    afficher_etapes_vip()
-    st.write("")
-
-    # Gestion de la mémoire du clic de paiement
-    if "paiement_clique" not in st.session_state:
-        st.session_state["paiement_clique"] = False
-
-    # BOUTON VALIDER LE PAIEMENT AVEC EFFETS SPÉCIAUX !
-    if st.button("🚀 VALIDER MON PAIEMENT", use_container_width=True):
-        st.session_state["paiement_clique"] = True
-        st.balloons()
-        st.snow() 
-
-    # APPARITION DU BOUTON WHATSAPP APPRÈS LE CLIC
-    if st.session_state["paiement_clique"]:
-        st.success("✅ Paiement signalé avec succès dans le système M'SIRI !")
-        st.markdown(
-            f"""<a href="https://wa.me/243973964067?text=J'ai%20payé%20mon%20accès%20M'SIRI%20(Mon%20ID%20Appareil%20:%20{st.session_state['my_device']})" target="_blank">
-                <button style="background-color: #25D366; color: white; border: none; padding: 15px 25px; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; font-size: 16px; box-shadow: 0px 4px 10px rgba(37, 211, 102, 0.3); width: 100%;">
-                    📲 CLIQUEZ ICI POUR ENVOYER VOTRE CAPTURE SUR WHATSAPP
-                </button>
-            </a>""", 
-            unsafe_allow_html=True
-        )
-    
-    st.divider()
-    
-    # 2. EN DERNIER POSITION : La case de clé d'activation pour basculer VIP
-    st.warning("🔑 Une fois votre clé reçue par le Commandant, insérez-la ici pour activer le Terminal :")
-    col_input, col_btn = st.columns([3, 1])
-    with col_input:
-        cle_saisie = st.text_input(
-            "Clé d'activation",
-            placeholder="Insérez votre clé VIP M'SIRI ici (MS-XXXX-XXXX)...",
-            label_visibility="collapsed",
-            key="champ_activation_vip"
-        )
-    with col_btn:
-        if st.button("🔓 ACTIVER L'ACCÈS", use_container_width=True, type="primary"):
-            if cle_saisie:
-                cle_saisie_clean = cle_saisie.strip()
-                keys_db = st.session_state.get("keys_db", {})
-                
-                if cle_saisie_clean in keys_db:
-                    appareil_lie = keys_db[cle_saisie_clean]
-                    current_device = st.session_state.get("my_device")
-                    
-                    if appareil_lie is None or appareil_lie == "None" or appareil_lie == current_device:
-                        if enregistrer_activation(cle_saisie_clean, current_device):
-                            st.session_state["auth"] = True
-                            st.success("⚡ Clé validée ! Alignement des satellites réussi.")
-                            time.sleep(1)
-                            st.rerun()
-                    else:
-                        st.error("❌ Cette clé est déjà verrouillée sur un autre appareil mobile.")
-                else:
-                    st.error("❌ Clé invalide ou inexistante. Vérifiez l'orthographe.")
-            else:
-                st.warning("⚠️ Veuillez saisir une clé avant de cliquer.")
-
-
-# CAS B : L'UTILISATEUR EST CONNECTÉ (Zone VIP Sécurisée)
 def calcul_poisson_msiri(domicile, exterieur):
     """
     Modèle de Poisson prédictif pour le football (version NumPy vectorisée)
-    
-    Args:
-        domicile (str): Nom de l'équipe à domicile
-        exterieur (str): Nom de l'équipe à l'extérieur
-    
-    Returns:
-        dict: win_a, nul, defaite, top (scores probables)
     """
-    # Base de données des forces d'équipes (à enrichir)
     forces = {
         "TP Mazembe": 1.4,
         "Saint Éloi Lupopo": 1.1,
@@ -291,59 +215,110 @@ def calcul_poisson_msiri(domicile, exterieur):
         "Al Ahly": 1.35,
     }
     
-    # Force par défaut si équipe non répertoriée
     force_dom = forces.get(domicile, 1.0)
     force_ext = forces.get(exterieur, 1.0)
     
-    # Buts attendus (lambda)
-    lambda_dom = force_dom * 1.8  # Moyenne générale domicile
-    lambda_ext = force_ext * 1.2  # Moyenne générale extérieur
+    # Calcul des Lambda (Buts attendus)
+    lambda_dom = force_dom * 1.8  
+    lambda_ext = force_ext * 1.2  
     
     max_buts = 10
-    
-    # Création des matrices de buts (vectorisation)
     buts_dom = np.arange(0, max_buts + 1)
     buts_ext = np.arange(0, max_buts + 1)
     
-def calcul_poisson_msiri_cached(domicile, exterieur):
-    """Version avec cache pour les mêmes paires d'équipes"""
-    return calcul_poisson_msiri(domicile, exterieur)
+    # Calcul des probabilités marginales (Loi de Poisson)
+    probs_dom = poisson.pmf(buts_dom, lambda_dom)
+    probs_ext = poisson.pmf(buts_ext, lambda_ext)
+    
+    # Produit matriciel pour obtenir la grille 11x11 de tous les scores possibles
+    matrice_scores = np.outer(probs_dom, probs_ext)
+    
+    # Extraction des probabilités de résultats (1, N, 2)
+    win_a = np.sum(np.tril(matrice_scores, -1)) * 100  # En dessous de la diagonale = Domicile gagne
+    nul = np.sum(np.diag(matrice_scores)) * 100        # Diagonale = Match nul
+    defaite = np.sum(np.triu(matrice_scores, 1)) * 100 # Au-dessus de la diagonale = Extérieur gagne
+    
+    # Extraction des 3 scores les plus probables
+    scores_list = []
+    for i in range(5): # On limite à 5 buts pour des scores réalistes en betting
+        for j in range(5):
+            scores_list.append((f"{i}-{j}", matrice_scores[i, j] * 100))
+            
+    scores_tries = sorted(scores_list, key=lambda x: x[1], reverse=True)
+    
+    return {
+        "win_a": win_a,
+        "nul": nul,
+        "defaite": defaite,
+        "top": scores_tries[:3],
+        "lambda_dom": lambda_dom,
+        "lambda_ext": lambda_ext
+    }
 
-# Dans Streamlit, utiliser st.cache_data
-@st.cache_data(ttl=3600)  # Cache d'une heure
+# Système de mise en cache Streamlit pour économiser le processeur
+@st.cache_data(ttl=3600)
 def calcul_poisson_msiri_streamlit(domicile, exterieur):
     return calcul_poisson_msiri(domicile, exterieur)
-def visualiser_matrice_poisson(domicile, exterieur):
-    """Affiche la matrice des probabilités de scores"""
-    res = calcul_poisson_msiri(domicile, exterieur)
-    
-    st.subheader(f"📊 Matrice des probabilités : {domicile} vs {exterieur}")
-    
-    # Création de la matrice pour l'affichage
-    max_buts = 6  # Afficher jusqu'à 6 buts pour lisibilité
-    lambda_dom = res['lambda_dom']
-    lambda_ext = res['lambda_ext']
-    
-    buts_dom = np.arange(0, max_buts + 1)
-    buts_ext = np.arange(0, max_buts + 1)
-    probs_dom = poisson.pmf(buts_dom[:, None], lambda_dom)
-    probs_ext = poisson.pmf(buts_ext[None, :], lambda_ext)
-    matrice = (probs_dom * probs_ext) * 100
-    
-    # Affichage avec Streamlit
-    st.dataframe(
-        matrice,
-        column_config={
-            "index": "Domicile →",
-            **{str(j): f"{j} buts" for j in range(max_buts + 1)}
-        },
-        use_container_width=True
-    )
 
-    # L'onglet Académie accueille désormais le Simulateur de Gestion de manière étanche
-    with tab3:
-        st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")
+# ====================================================================================
+# --- INTÉGRATION COMPLÈTE DANS LA ZONE VIP (CAS B) ---
+# ====================================================================================
+
+# (Ce bloc s'exécute dans ton "else" quand l'utilisateur est connecté)
+if st.session_state.get("auth", False):
+    st.success(f"🔓 ACCÈS VIP COLLABORATEUR ACTIF (ID Appareil : {st.session_state['my_device'][:10]})")
+    
+    tab1, tab2, tab3 = st.tabs(["⚽ ANALYSE FOOT", "🏀 PRONOSTIQUEUR NBA", "🎓 ACADÉMIE"])
+    
+    with tab1:
+        st.subheader("🔬 Analyseur Poisson Vectorisé 2100")
         
+        col_f1, col_f2 = st.columns(2)
+        with col_f1:
+            f1 = st.text_input("Domicile", key="f1", value="TP Mazembe")
+        with col_f2:
+            f2 = st.text_input("Extérieur", key="f2", value="Saint Éloi Lupopo")
+            
+        if st.button("LANCER L'ANALYSE SCIENTIFIQUE"):
+            # Appel de la fonction ultra-rapide avec cache
+            res = calcul_poisson_msiri_streamlit(f1, f2)
+            
+            # Affichage des probabilités de résultats
+            c1, c2, c3 = st.columns(3)
+            c1.metric(label=f"Victoire {f1}", value=f"{res['win_a']:.1f}%")
+            c2.metric(label="Match Nul", value=f"{res['nul']:.1f}%")
+            c3.metric(label=f"Victoire {f2}", value=f"{res['defaite']:.1f}%")
+            
+            st.divider()
+            
+            # Affichage des Scores Exacts les plus probables
+            st.write("🎯 **Top 3 des Scores Exacts les plus probables :**")
+            for score, prob in res['top']:
+                st.write(f"• **{score}** avec **{prob:.1f}%** de chance")
+                
+            st.divider()
+            
+            # Affichage de la matrice complète en DataFrame
+            st.subheader(f"📊 Matrice des probabilités : {f1} vs {f2}")
+            max_buts_visu = 5
+            probs_dom_visu = poisson.pmf(np.arange(0, max_buts_visu + 1), res['lambda_dom'])
+            probs_ext_visu = poisson.pmf(np.arange(0, max_buts_visu + 1), res['lambda_ext'])
+            matrice_visu = np.outer(probs_dom_visu, probs_ext_visu) * 100
+            
+            st.dataframe(
+                matrice_visu,
+                column_config={str(j): f"{j} Buts" for j in range(max_buts_visu + 1)},
+                use_container_width=True
+            )
+
+    with tab2:
+        st.subheader("🏀 PRONOSTIQUEUR NBA & BASKET")
+        # Ton code NBA reste ici...
+        st.write("Terminal NBA prêt pour le déploiement.")
+
+    with tab3:
+        st.subheader("🎓 L'ACADÉMIE DES MILLIONNAIRES")        
+    
         # --- SIMULATEUR DE GESTION (EMBARQUÉ CHEZ LES VIP) ---
         st.markdown("### 🧮 SIMULATEUR DE GESTION DE CAPITAL (MONEY MANAGEMENT)")
         st.info("Entrez votre capital actuel pour recevoir votre plan de bataille quotidien.")
