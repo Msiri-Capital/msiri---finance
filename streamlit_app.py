@@ -4,7 +4,6 @@ import math
 import time
 import numpy as np
 from streamlit_gsheets import GSheetsConnection
-from scipy.stats import poisson
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 # --- SÉCURITÉ ADMIN ---
