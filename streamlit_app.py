@@ -4,7 +4,96 @@ from scipy.stats import poisson
 import random
 import math
 import time
-from streamlit_gsheets import GSheetsConnection
+import json
+import os
+from datetime import datetime
+streamlit_gsheets import GSheetsConnection
+# --- CONFIGURATION DU QG (Base de données locale des commentaires) ---
+FICHIER_COMMENTAIRES = "commentaires_msiri.json"
+MOT_DE_PASSE_ADMIN = "Generale27" # Change ce mot de passe par ta clé secrète
+
+def charger_commentaires():
+    if os.path.exists(FICHIER_COMMENTAIRES):
+        with open(FICHIER_COMMENTAIRES, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def sauvegarder_commentaire(nom, texte):
+    commentaires = charger_commentaires()
+    commentaires.append({
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "nom": nom,
+        "texte": texte
+    })
+    with open(FICHIER_COMMENTAIRES, "w", encoding="utf-8") as f:
+        json.dump(commentaires, f, indent=4)
+
+# --- INITIALISATION DE LA MÉMOIRE TACTIQUE ---
+if "en_cours_de_fermeture" not in st.session_state:
+    st.session_state["en_cours_de_fermeture"] = False
+if "commentaire_envoye" not in st.session_state:
+    st.session_state["commentaire_envoye"] = False
+
+# =====================================================================
+# SECTION 1 : LE PANNEAU SECRET DE L'ÉTAT-MAJOR (Pour lire les avis)
+# =====================================================================
+with st.sidebar:
+    st.write("### 🔐 Accès Commandement")
+    mdp_saisi = st.text_input("Code confidentiel", type="password", key="admin_pass")
+    
+    if mdp_saisi == MOT_DE_PASSE_ADMIN:
+        st.success("✅ Accès autorisé")
+        st.write("### 📂 Archives des Renseignements")
+        archives = charger_commentaires()
+        if archives:
+            for com in archives:
+                st.info(f"**{com['nom']}** ({com['date']})\n\n{com['texte']}")
+        else:
+            st.warning("Aucun rapport reçu pour le moment.")
+
+# =====================================================================
+# SECTION 2 : LE BLOCAGE DE SORTIE (Le formulaire obligatoire)
+# =====================================================================
+if st.session_state["en_cours_de_fermeture"]:
+    st.write("## 📝 RAPPORT DE MISSION OBLIGATOIRE")
+    
+    if not st.session_state["commentaire_envoye"]:
+        st.warning("⚠️ Pour clôturer votre session d'essai, veuillez laisser vos impressions sur l'algorithme.")
+        
+        nom_utilisateur = st.text_input("Votre nom ou pseudo :")
+        texte_commentaire = st.text_area("Vos critiques, suggestions ou bugs rencontrés :", height=150)
+        
+        if st.button("📤 SOUMETTRE LE RAPPORT ET QUITTER", type="primary", use_container_width=True):
+            if nom_utilisateur.strip() == "" or texte_commentaire.strip() == "":
+                st.error("❌ Les champs ne peuvent pas être vides. Remplissez le rapport.")
+            else:
+                sauvegarder_commentaire(nom_utilisateur, texte_commentaire)
+                st.session_state["commentaire_envoye"] = True
+                st.success("✅ Rapport transmis à l'État-Major M'SIRI. Déconnexion...")
+                time.sleep(2)
+                st.rerun()
+    else:
+        st.success("SESSION TERMINÉE. Merci pour votre contribution.")
+        st.info("Vous pouvez maintenant fermer cette fenêtre.")
+        
+    # On arrête le code ici pour que l'app principale ne s'affiche pas
+    st.stop()
+
+# =====================================================================
+# SECTION 3 : L'APPLICATION PRINCIPALE M'SIRI (Mode Essai)
+# =====================================================================
+st.write("## 🚀 SYSTÈME M'SIRI - MODE ESSAI ACTIF")
+st.info("Vous utilisez actuellement les algorithmes en mode temporaire.")
+
+# ... ICI TU METS TOUT LE RESTE DE TON CODE (calculs, poisson, etc.) ...
+st.write("*(Simulation de tes outils d'algorithme...)*")
+
+# 🛑 LE BOUTON POUR QUITTER (Placé idéalement en bas de page ou dans la barre latérale)
+st.divider()
+if st.button("🛑 TERMINER L'ESSAI", use_container_width=True):
+    st.session_state["en_cours_de_fermeture"] = True
+    st.rerun()
+
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 # --- SÉCURITÉ ADMIN ---
