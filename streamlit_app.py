@@ -7,7 +7,7 @@ import time
 import json
 import os
 from datetime import datetime
-streamlit_gsheets import GSheetsConnection
+from streamlit_gsheets import GSheetsConnection
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
 st.set_page_config(page_title="M'SIRI CAPITAL | TERMINAL 2100", layout="wide", initial_sidebar_state="collapsed")
 # --- SÉCURITÉ ADMIN ---
