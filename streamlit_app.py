@@ -6,6 +6,7 @@ import math
 import time
 import json
 import os
+from scipy.stats import poisson
 from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 # --- 1. CONFIGURATION (DOIT ÊTRE EN PREMIER) ---
@@ -248,58 +249,58 @@ if not st.session_state.get("auth", False):
 
 # CAS B : L'UTILISATEUR EST CONNECTÉ (Tout s'efface pour laisser place aux algorithmes)
 
-# ====================================================================================
-# --- MOTEUR MATHÉMATIQUE DE POISSON VECTORISÉ (VERSION D'ÉLITE) ---
-# ====================================================================================
+# Définition des forces des équipes avec une valeur par défaut
+forces = {
+    "Real Madrid": 1.5,
+    "Atletico de Madrid": 1.2,
+    "TP Mazembe": 1.4,
+    "Saint Éloi Lupopo": 1.1,
+    "Vita Club": 1.2,
+    "AS VClub": 1.15,
+    "DCMP": 0.9,
+    "Maniema Union": 1.05,
+    "Raja Casablanca": 1.3,
+    "Wydad": 1.28,
+    "ES Tunis": 1.25,
+    "Al Ahly": 1.35,
+    # Ajouter d'autres équipes si nécessaire
+}
 
-def calcul_poisson_msiri(domicile, exterieur):
+def calcul_poisson(domicile, exterieur):
     """
-    Modèle de Poisson prédictif pour le football (version NumPy vectorisée)
+    Modèle de poisson prédictif pour deux équipes
     """
-    forces = {
-        "TP Mazembe": 1.4,
-        "Saint Éloi Lupopo": 1.1,
-        "Vita Club": 1.2,
-        "AS VClub": 1.15,
-        "DCMP": 0.9,
-        "Maniema Union": 1.05,
-        "Raja Casablanca": 1.3,
-        "Wydad": 1.28,
-        "ES Tunis": 1.25,
-        "Al Ahly": 1.35,
-    }
-    
-    force_dom = forces.get(domicile, 1.0)
-    force_ext = forces.get(exterieur, 1.0)
-    
+    force_dom = forces.get(domicile, 1.0)  # Force de l'équipe à domicile
+    force_ext = forces.get(exterieur, 1.0)  # Force de l'équipe à l'extérieur
+
     # Calcul des Lambda (Buts attendus)
-    lambda_dom = force_dom * 1.8  
-    lambda_ext = force_ext * 1.2  
-    
+    lambda_dom = force_dom * 1.8
+    lambda_ext = force_ext * 1.2
+
     max_buts = 10
     buts_dom = np.arange(0, max_buts + 1)
     buts_ext = np.arange(0, max_buts + 1)
-    
+
     # Calcul des probabilités marginales (Loi de Poisson)
     probs_dom = poisson.pmf(buts_dom, lambda_dom)
     probs_ext = poisson.pmf(buts_ext, lambda_ext)
-    
-    # Produit matriciel pour obtenir la grille 11x11 de tous les scores possibles
+
+    # Produit matriciel pour obtenir la grille de tous les scores possibles
     matrice_scores = np.outer(probs_dom, probs_ext)
-    
-    # Extraction des probabilités de résultats (1, N, 2)
-    win_a = np.sum(np.tril(matrice_scores, -1)) * 100  # En dessous de la diagonale = Domicile gagne
-    nul = np.sum(np.diag(matrice_scores)) * 100        # Diagonale = Match nul
-    defaite = np.sum(np.triu(matrice_scores, 1)) * 100 # Au-dessus de la diagonale = Extérieur gagne
-    
+
+    # Extraction des probabilités de résultats
+    win_a = np.sum(np.tril(matrice_scores, -1)) * 100  # Domicile gagne
+    nul = np.sum(np.diag(matrice_scores)) * 100        # Match nul
+    defaite = np.sum(np.triu(matrice_scores, 1)) * 100 # Extérieur gagne
+
     # Extraction des 3 scores les plus probables
     scores_list = []
-    for i in range(5): # On limite à 5 buts pour des scores réalistes en betting
-        for j in range(5):
+    for i in range(6):  # Limite à 5 buts + 0 pour la précision
+        for j in range(6):
             scores_list.append((f"{i}-{j}", matrice_scores[i, j] * 100))
-            
+
     scores_tries = sorted(scores_list, key=lambda x: x[1], reverse=True)
-    
+
     return {
         "win_a": win_a,
         "nul": nul,
@@ -309,10 +310,16 @@ def calcul_poisson_msiri(domicile, exterieur):
         "lambda_ext": lambda_ext
     }
 
-# Système de mise en cache Streamlit pour économiser le processeur
-@st.cache_data(ttl=3600)
-def calcul_poisson_msiri_streamlit(domicile, exterieur):
-    return calcul_poisson_msiri(domicile, exterieur)
+# Fonction d'exécution avec des équipes dynamiques
+def executer_calcul(domicile, exterieur):
+    resultats = calcul_poisson(domicile, exterieur)
+    print(f"Probabilités de victoire {domicile} :", resultats["win_a"])
+    print(f"Probabilités de match nul :", resultats["nul"])
+    print(f"Probabilités de victoire {exterieur} :", resultats["defaite"])
+    print("Scores les plus probables :", resultats["top"])
+
+# Exemple d'utilisation
+executer_calcul("Real Madrid", "Atletico de Madrid")
 
 # --- CONFIGURATION DU QG (Base de données locale des commentaires) ---
 FICHIER_COMMENTAIRES = "commentaires_msiri.json"
