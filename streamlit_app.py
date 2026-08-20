@@ -266,7 +266,7 @@ forces = {
     # Ajouter d'autres équipes si nécessaire
 }
 
-def calcul_poisson(f1, f2):
+def calcul_poisson(domicile, exterieur):
     """
     Modèle de poisson prédictif pour deux équipes
     """
