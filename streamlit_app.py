@@ -427,7 +427,7 @@ if st.session_state.get("auth", False):
             
         if st.button("LANCER L'ANALYSE SCIENTIFIQUE"):
             # Appel de la fonction ultra-rapide avec cache
-            res = calcul_poisson_msiri_streamlit(f1, f2)
+            res = calcul_poisson_msiri_streamlit(domicile, exterieur)
             
             # Affichage des probabilités de résultats
             c1, c2, c3 = st.columns(3)
@@ -490,14 +490,14 @@ if st.session_state.get("auth", False):
         # --- LA DOCTRINE M'SIRI ---
         st.markdown("""
         ### 📜 Les 3 Lois d'Airain du Capital
-        1. **La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
-        2. **Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
-        3. **La Discipline du Monde des rois :** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.    
+        1. La Loi du Pourcentage :** On ne mise jamais une somme fixe (ex: 10$), on mise toujours un pourcentage de ce qu'on possède.
+        2. Le Stop-Loss Mental :** Si vous perdez 3 fois de suite, éteignez le terminal. Revenez demain, le marché ne fuit pas.
+        3. La Discipline du Monde des rois :** Le profit se construit sur un mois, pas sur un soir. Soyez patient comme un lion.    
 ---
 ### 📖 Guide d'Utilisation du Terminal
-* **Signaux Trading :** Actualisez la page toutes les 15 minutes.
-* **Analyse Poisson :** Précision de 85% sur les grands championnats.
-* **Retraits Orange Money :** Sécurisez 50% de vos bénéfices chaque dimanche.
+* Signaux Trading : Actualisez la page toutes les 15 minutes.
+* Analyse Poisson : Précision de 85% sur les grands championnats.
+* Retraits Orange Money : Sécurisez 50% de vos bénéfices chaque dimanche.
 """)
 
 # ====================================================================================
