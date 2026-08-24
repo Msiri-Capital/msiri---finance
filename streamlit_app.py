@@ -662,21 +662,17 @@ if st.session_state.get("en_cours_de_fermeture", False):
     if not st.session_state.get("commentaire_envoye", False):
         st.warning("⚠️ Pour clôturer votre session d'essai, veuillez laisser vos impressions sur l'algorithme.")
         
-        # ✅ Zone de saisie du nom
         nom_utilisateur = st.text_input("Votre nom ou pseudo :")
-        
-        # ✅ ZONE DE COMMENTAIRE (la case qui manquait !)
         commentaire = st.text_area(
             "📝 Votre commentaire :",
             placeholder="Écrivez ici vos impressions sur l'algorithme...",
             height=150
         )
         
-        # ✅ BOUTON D'ENVOI
         if st.button("📤 Envoyer mon commentaire", use_container_width=True, type="primary"):
             if nom_utilisateur and commentaire:
-                # Appel à la fonction d'enregistrement
-                if sauvegarde_commentaire(nom_utilisateur, commentaire):
+                # ✅ CORRECTION ICI : sauvegarder_commentaire au lieu de enregistrer_commentaire
+                if sauvegarder_commentaire(nom_utilisateur, commentaire):
                     st.session_state["commentaire_envoye"] = True
                     st.success("✅ Merci ! Votre commentaire a été enregistré.")
                     st.rerun()
@@ -685,7 +681,6 @@ if st.session_state.get("en_cours_de_fermeture", False):
             else:
                 st.error("⚠️ Veuillez remplir tous les champs !")
         
-        # Option pour annuler
         if st.button("❌ Annuler", use_container_width=True):
             st.session_state["en_cours_de_fermeture"] = False
             st.rerun()
