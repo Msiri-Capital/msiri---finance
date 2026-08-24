@@ -676,7 +676,7 @@ if st.session_state.get("en_cours_de_fermeture", False):
         if st.button("📤 Envoyer mon commentaire", use_container_width=True, type="primary"):
             if nom_utilisateur and commentaire:
                 # Appel à la fonction d'enregistrement
-                if enregistrer_commentaire(nom_utilisateur, commentaire):
+                if sauvegarde_commentaire(nom_utilisateur, commentaire):
                     st.session_state["commentaire_envoye"] = True
                     st.success("✅ Merci ! Votre commentaire a été enregistré.")
                     st.rerun()
