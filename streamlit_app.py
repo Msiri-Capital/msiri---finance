@@ -9,6 +9,43 @@ import os
 from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 from typing import Dict, Tuple, List, Optional
+import mysql.connector
+from mysql.connector import Error
+import datetime
+
+def enregistrer_commentaire(nom, commentaire):
+    """Enregistre le commentaire dans la base de données"""
+    try:
+        # Connexion à la BDD
+        connexion = mysql.connector.connect(
+            host="localhost",
+            database="ta_base",
+            user="ton_utilisateur",
+            password="ton_mot_de_passe"
+        )
+        
+        if connexion.is_connected():
+            cursor = connexion.cursor()
+            
+            # Requête SQL
+            sql = """INSERT INTO commentaires (nom_utilisateur, contenu, date_creation) 
+                     VALUES (%s, %s, %s)"""
+            
+            valeurs = (nom, commentaire, datetime.datetime.now())
+            
+            cursor.execute(sql, valeurs)
+            connexion.commit()
+            
+            cursor.close()
+            connexion.close()
+            
+            return True
+            
+    except Error as e:
+        st.error(f"Erreur BDD : {e}")
+        return False
+    
+    return False
 
 # --- CONFIGURATION STREAMLIT (UNIQUE) ---
 st.set_page_config(
@@ -662,11 +699,36 @@ if st.session_state.get("en_cours_de_fermeture", False):
     if not st.session_state.get("commentaire_envoye", False):
         st.warning("⚠️ Pour clôturer votre session d'essai, veuillez laisser vos impressions sur l'algorithme.")
         
+        # ✅ Zone de saisie du nom
         nom_utilisateur = st.text_input("Votre nom ou pseudo :")
         
-        # ✅ Correction appliquée - utilisation correcte de st.write()
-        texte_affiche = "Bienvenue sur l'application Finance"
-        st.write(texte_affiche)
+        # ✅ ZONE DE COMMENTAIRE (la case qui manquait !)
+        commentaire = st.text_area(
+            "📝 Votre commentaire :",
+            placeholder="Écrivez ici vos impressions sur l'algorithme...",
+            height=150
+        )
         
-        # Alternative avec st.text()
-        # st.text("Votre texte ici")
+        # ✅ BOUTON D'ENVOI
+        if st.button("📤 Envoyer mon commentaire", use_container_width=True, type="primary"):
+            if nom_utilisateur and commentaire:
+                # Appel à la fonction d'enregistrement
+                if enregistrer_commentaire(nom_utilisateur, commentaire):
+                    st.session_state["commentaire_envoye"] = True
+                    st.success("✅ Merci ! Votre commentaire a été enregistré.")
+                    st.rerun()
+                else:
+                    st.error("❌ Erreur lors de l'enregistrement. Réessayez.")
+            else:
+                st.error("⚠️ Veuillez remplir tous les champs !")
+        
+        # Option pour annuler
+        if st.button("❌ Annuler", use_container_width=True):
+            st.session_state["en_cours_de_fermeture"] = False
+            st.rerun()
+    
+    else:
+        st.success("✅ Commentaire déjà envoyé. Merci pour votre retour !")
+        if st.button("🔙 Retour à l'accueil"):
+            st.session_state["en_cours_de_fermeture"] = False
+            st.rerun()
