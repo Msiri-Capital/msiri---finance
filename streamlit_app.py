@@ -663,9 +663,10 @@ if st.session_state.get("en_cours_de_fermeture", False):
         st.warning("⚠️ Pour clôturer votre session d'essai, veuillez laisser vos impressions sur l'algorithme.")
         
         nom_utilisateur = st.text_input("Votre nom ou pseudo :")
-        # ✅ Correction possible
-texte_affiche = "Bienvenue sur l'application Finance"
-st.write(texte_affiche)
-# Ou simplement :
-st.text("Votre texte ici")
- 
+        
+        # ✅ Correction appliquée - utilisation correcte de st.write()
+        texte_affiche = "Bienvenue sur l'application Finance"
+        st.write(texte_affiche)
+        
+        # Alternative avec st.text()
+        # st.text("Votre texte ici")
