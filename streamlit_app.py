@@ -664,3 +664,4 @@ if st.session_state.get("en_cours_de_fermeture", False):
         
         nom_utilisateur = st.text_input("Votre nom ou pseudo :")
         texte_
+        st.write("Votre texte ici")
