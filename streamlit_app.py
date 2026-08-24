@@ -9,43 +9,6 @@ import os
 from datetime import datetime
 from streamlit_gsheets import GSheetsConnection
 from typing import Dict, Tuple, List, Optional
-import mysql.connector
-from mysql.connector import Error
-import datetime
-
-def enregistrer_commentaire(nom, commentaire):
-    """Enregistre le commentaire dans la base de données"""
-    try:
-        # Connexion à la BDD
-        connexion = mysql.connector.connect(
-            host="localhost",
-            database="ta_base",
-            user="ton_utilisateur",
-            password="ton_mot_de_passe"
-        )
-        
-        if connexion.is_connected():
-            cursor = connexion.cursor()
-            
-            # Requête SQL
-            sql = """INSERT INTO commentaires (nom_utilisateur, contenu, date_creation) 
-                     VALUES (%s, %s, %s)"""
-            
-            valeurs = (nom, commentaire, datetime.datetime.now())
-            
-            cursor.execute(sql, valeurs)
-            connexion.commit()
-            
-            cursor.close()
-            connexion.close()
-            
-            return True
-            
-    except Error as e:
-        st.error(f"Erreur BDD : {e}")
-        return False
-    
-    return False
 
 # --- CONFIGURATION STREAMLIT (UNIQUE) ---
 st.set_page_config(
