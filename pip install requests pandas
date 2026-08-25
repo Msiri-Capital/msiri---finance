@@ -1,1 +1,6 @@
-
+msiri-capital/
+├── app.py
+├── api_client.py      # NOUVEAU : client API-Sports
+├── requirements.txt
+├── .env
+└── .gitignore
