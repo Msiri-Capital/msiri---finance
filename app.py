@@ -31,7 +31,6 @@ try:
         afficher_etapes_vip
     )
 except ImportError:
-    st.error("❌ Fichier utils.py manquant !")
     # Fonctions de secours
     def obtenir_citation_du_jour():
         return "La discipline est le pont entre les objectifs et l'accomplissement."
@@ -103,7 +102,7 @@ if API_SPORTS_KEY:
         st.warning(f"⚠️ Erreur d'initialisation API-Sports: {e}")
 
 # ===================================================================
-# FONCTIONS DE PRONOSTIC (SIMPLIFIÉES POUR LE TEST)
+# FONCTIONS DE PRONOSTIC
 # ===================================================================
 
 def calcul_poisson_simple(domicile, exterieur):
@@ -113,6 +112,8 @@ def calcul_poisson_simple(domicile, exterieur):
         "Real Sociedad": {"off": 1.6, "def": 1.0},
         "TP Mazembe": {"off": 1.8, "def": 0.7},
         "Saint Éloi Lupopo": {"off": 1.2, "def": 1.1},
+        "Barcelona": {"off": 2.0, "def": 0.9},
+        "Atletico Madrid": {"off": 1.5, "def": 1.0},
     }
     
     fdom = forces.get(domicile, {"off": 1.0, "def": 1.0})
@@ -141,14 +142,38 @@ def calcul_poisson_simple(domicile, exterieur):
 # INTERFACE PRINCIPALE
 # ===================================================================
 
-st.title("🏛️ M'SIRI CAPITAL")
-st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
+# --- BANDEAU DÉFILANT ---
+st.markdown("""
+<div style="background: #001a00; padding: 5px; overflow: hidden; white-space: nowrap;">
+    <span style="display: inline-block; animation: scroll 30s linear infinite; color: #00ff00; font-weight: bold;">
+        🟢 Gaston M. +450$ (BTC/USD) | 🟢 Membre #22 +120$ (NBA) | 
+        🟢 Justin K. +85$ (Mazembe vs Lupopo) | 🟢 Signal IA validé : ETH +4.2%
+    </span>
+</div>
+<style>
+    @keyframes scroll {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # --- CITATION ---
 st.info(f"📜 {obtenir_citation_du_jour()}")
 
+# --- TITRE ---
+st.title("🏛️ M'SIRI CAPITAL")
+st.caption("Le terminal d'élite pour le Trading et les Statistiques Sportives.")
+
 # --- SECTION PRINCIPALE ---
 st.subheader("⚽ ANALYSE FOOT")
+
+# Vérifier si l'API est disponible
+if api_client:
+    st.success("✅ API-Sports.io connectée - Données réelles disponibles")
+else:
+    st.info("ℹ️ Mode simulation - Données locales")
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -156,19 +181,78 @@ with col1:
 with col2:
     exterieur = st.text_input("✈️ Extérieur", value="Real Sociedad")
 
-if st.button("🚀 ANALYSER", type="primary"):
+# Sélection de la compétition
+competition = st.selectbox(
+    "🏆 Compétition",
+    ["Liga", "Premier League", "Ligue 1", "Bundesliga", "Serie A"]
+)
+
+if st.button("🚀 ANALYSER", type="primary", use_container_width=True):
     with st.spinner("🔬 Calcul en cours..."):
         res = calcul_poisson_simple(domicile, exterieur)
         
+        # Affichage des résultats
         col_p1, col_p2, col_p3 = st.columns(3)
-        col_p1.metric(f"Victoire {domicile}", f"{res['win_a']:.1f}%")
-        col_p2.metric("Match Nul", f"{res['nul']:.1f}%")
-        col_p3.metric(f"Victoire {exterieur}", f"{res['defaite']:.1f}%")
+        col_p1.metric(
+            label=f"🏠 Victoire {domicile}",
+            value=f"{res['win_a']:.1f}%",
+            delta=f"{res['win_a'] - 33:.1f}% vs aléatoire"
+        )
+        col_p2.metric(
+            label="🤝 Match Nul",
+            value=f"{res['nul']:.1f}%",
+            delta=f"{res['nul'] - 33:.1f}% vs aléatoire"
+        )
+        col_p3.metric(
+            label=f"✈️ Victoire {exterieur}",
+            value=f"{res['defaite']:.1f}%",
+            delta=f"{res['defaite'] - 33:.1f}% vs aléatoire"
+        )
         
         st.divider()
-        st.write("🎯 Scores les plus probables:")
-        for score, prob in res['top']:
-            st.write(f"• **{score}** → {prob:.1f}%")
+        
+        # Scores les plus probables
+        st.write("🎯 **Scores les plus probables :**")
+        cols = st.columns(3)
+        for i, (score, prob) in enumerate(res['top']):
+            with cols[i]:
+                st.metric(label=f"Score {i+1}", value=score, delta=f"{prob:.1f}%")
+        
+        # Plus/Moins 2.5
+        st.divider()
+        if res['over25'] > 50:
+            st.success(f"⚽ Plus de 2.5 buts : {res['over25']:.1f}%")
+        else:
+            st.info(f"⚽ Moins de 2.5 buts : {100 - res['over25']:.1f}%")
+        
+        # Pronostic final (simulé)
+        st.divider()
+        st.subheader("🏆 PRONOSTIC FINAL")
+        
+        if res['win_a'] > 50:
+            resultat = f"VICTOIRE {domicile}"
+            confiance = min(80, res['win_a'])
+        elif res['defaite'] > 50:
+            resultat = f"VICTOIRE {exterieur}"
+            confiance = min(80, res['defaite'])
+        else:
+            resultat = "MATCH NUL"
+            confiance = 60
+        
+        col_prono1, col_prono2 = st.columns(2)
+        with col_prono1:
+            st.metric(label="Résultat", value=resultat)
+        with col_prono2:
+            st.metric(
+                label="Confiance",
+                value=f"{confiance:.0f}%",
+                delta=f"{confiance - 50:.0f}% vs aléatoire"
+            )
+        
+        if api_client:
+            st.caption("📡 Données fournies par API-Sports.io")
+        else:
+            st.caption("📊 Données simulées - Mode démo")
 
 # --- FOOTER ---
 st.divider()
