@@ -1,9 +1,9 @@
-# utils.py
-# Fonctions utilitaires pour M'SIRI CAPITAL
+# ===================================================================
+# utils.py - Fonctions utilitaires M'SIRI CAPITAL
+# ===================================================================
 
 import random
 import time
-from datetime import datetime
 import streamlit as st
 
 def obtenir_citation_du_jour():
