@@ -1,5 +1,3 @@
-# api_client.py - Client API-Sports.io V3
-
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
